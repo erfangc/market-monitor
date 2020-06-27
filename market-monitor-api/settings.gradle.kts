@@ -1,1 +1,1 @@
-rootProject.name = "market-monitor"
+rootProject.name = "market-monitor-api"
