@@ -1,4 +1,4 @@
-package com.ma.io
+package com.github.erfangc.marketmonitor.io
 
 import org.apache.http.impl.client.CloseableHttpClient
 import org.apache.http.impl.client.HttpClientBuilder

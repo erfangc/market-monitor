@@ -4,16 +4,22 @@
 package com.github.erfangc.marketmonitor.fundamentals
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
-import com.ma.io.MongoDB.fundamentals
-import com.ma.fundamentals.models.Fundamental
+import com.github.erfangc.marketmonitor.fundamentals.models.Fundamental
+import com.github.erfangc.marketmonitor.fundamentals.models.FundamentalRow
+import com.github.erfangc.marketmonitor.io.MongoDB
 import com.mongodb.client.model.Indexes
 import com.vhl.blackmo.grass.dsl.grass
+import org.litote.kmongo.getCollection
+import org.slf4j.LoggerFactory
+
+val fundamentals = MongoDB.database.getCollection<FundamentalRow>()
 
 @ExperimentalStdlibApi
 private fun loadFundamentals() {
 
     val fileName = "/Users/erfangchen/Downloads/SHARADAR_SF1_0902195e140925ca23756cd43d9f89ae.csv"
     val fundamentals = fundamentals
+    val log = LoggerFactory.getLogger("loadFundamentals")
 
     fundamentals.drop()
     fundamentals.createIndex(Indexes.ascending(Fundamental::datekey.name))
@@ -24,16 +30,15 @@ private fun loadFundamentals() {
                 val seq = readAllWithHeaderAsSequence()
                 grass<Fundamental>()
                         .harvest(seq)
-                        .forEachIndexed { idx, fundamental ->
-                            val result = fundamentals.insertOne(fundamental)
-                            println(
-                                    "Inserted" +
-                                            " ticker=${fundamental.ticker}" +
-                                            " idx=$idx" +
-                                            " dimension=${fundamental.dimension} " +
-                                            " datekey=${fundamental.datekey}" +
-                                            " _id=${result.insertedId}"
-                            )
+                        .chunked(5000)
+                        .forEachIndexed {
+                            idx, chunk ->
+                            val rows = chunk.map { FundamentalRow(
+                                    _id = "${it.ticker}:${it.dimension}:${it.reportperiod}",
+                                    fundamental = it
+                            ) }
+                            fundamentals.insertMany(rows)
+                            log.info("Loaded batch $idx into MongoDB")
                         }
             }
 

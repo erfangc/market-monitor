@@ -1,9 +1,14 @@
-package com.ma.fundamentals.models
+package com.github.erfangc.marketmonitor.fundamentals.models
 
 import java.time.LocalDate
 
+data class FundamentalRow(
+        val _id: String,
+        val fundamental: Fundamental
+)
+
 data class Fundamental(
-        // Ticker Symbol
+        // com.github.erfangc.marketmonitor.tickers.Ticker Symbol
         val ticker: String,
         // Dimension
         val dimension: String,

@@ -1,18 +1,16 @@
-package com.ma.io
+package com.github.erfangc.marketmonitor.io
 
-import com.ma.dailymetrics.models.DailyMetric
-import com.ma.fundamentals.models.Fundamental
+import com.mongodb.MongoClientSettings
 import org.litote.kmongo.KMongo
-import org.litote.kmongo.getCollection
 
 object MongoDB {
-
-    private val mongoClient = KMongo.createClient()
-
-    private val database = mongoClient.getDatabase("test")
-
-    val fundamentals = database.getCollection<Fundamental>()
-
-    val dailyMetrics = database.getCollection<DailyMetric>()
-
+    private val settings = MongoClientSettings
+            .builder()
+            .applyToConnectionPoolSettings {
+                it.maxSize(50)
+                it.minSize(5)
+            }
+            .build()
+    private val mongoClient = KMongo.createClient(settings)
+    val database = mongoClient.getDatabase("test")
 }
