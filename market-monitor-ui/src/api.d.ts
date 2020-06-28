@@ -158,6 +158,36 @@ interface PriceToEarningContributor {
     ticker: string;
 }
 
+interface Scenario {
+    expectedReturn: number;
+    longTermGrowth: number;
+    price: number;
+}
+
+interface ShortTermEpsGrowth {
+    date: Date;
+    growthRate: number;
+}
+
+interface CompanyReturnAnalysis {
+    bvps: number;
+    date: Date;
+    eps: number;
+    expectedReturn: number;
+    longTermGrowth: number;
+    priceToEarning: number;
+    scenarios: Scenario[];
+    shortTermEpsGrowths: ShortTermEpsGrowth[];
+    ticker: string;
+}
+
+interface CompanyReturnAnalysisRequest {
+    date: Date;
+    longTermGrowth: number;
+    shortTermEpsGrowths: ShortTermEpsGrowth[];
+    ticker: string;
+}
+
 interface Ticker {
     category: string | null;
     companysite: string | null;

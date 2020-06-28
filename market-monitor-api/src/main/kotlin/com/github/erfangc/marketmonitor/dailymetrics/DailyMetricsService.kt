@@ -3,12 +3,14 @@ package com.github.erfangc.marketmonitor.dailymetrics
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.github.erfangc.marketmonitor.dailymetrics.models.DailyMetric
 import com.github.erfangc.marketmonitor.dailymetrics.models.DailyMetricRow
-import com.github.erfangc.marketmonitor.io.MongoDB.database
 import com.github.erfangc.marketmonitor.io.HttpClient
+import com.github.erfangc.marketmonitor.io.MongoDB.database
 import com.mongodb.client.model.Indexes
 import com.vhl.blackmo.grass.dsl.grass
 import org.apache.http.client.methods.HttpGet
 import org.litote.kmongo.div
+import org.litote.kmongo.eq
+import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -25,6 +27,13 @@ class DailyMetricsService {
 
     companion object {
         val dailyMetrics = database.getCollection<DailyMetricRow>()
+    }
+
+    fun getDailyMetric(ticker: String, date: LocalDate): DailyMetric? {
+        return dailyMetrics.findOne(
+                DailyMetricRow::dailyMetric / DailyMetric::ticker eq ticker,
+                DailyMetricRow::dailyMetric / DailyMetric::date eq date
+        )?.dailyMetric
     }
 
     fun recreateTable() {

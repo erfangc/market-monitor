@@ -22,19 +22,22 @@ class FundamentalsService {
 
     private val log = LoggerFactory.getLogger(FundamentalsService::class.java)
 
-    @Cacheable("getMrq")
-    fun getMrq(ticker: String, notAfter: LocalDate?): List<Fundamental> {
-        val notAfter = notAfter ?: LocalDate.now()
-        val reportperiod = FundamentalRow::fundamental / Fundamental::reportperiod
-        val dimension = FundamentalRow::fundamental / Fundamental::dimension
-        val tickerProperty = FundamentalRow::fundamental / Fundamental::ticker
-        return fundamentals.find(
-                and(
-                        reportperiod lte notAfter,
-                        dimension eq "MRQ",
-                        tickerProperty eq ticker
-                )
-        ).toList().sortedBy { it.fundamental.reportperiod }.map { it.fundamental }
+    @Cacheable("getMRQ")
+    fun getMRQ(ticker: String, notAfter: LocalDate?): List<Fundamental> {
+        val dimension = "MRQ"
+        return getForDimension(notAfter, dimension, ticker)
+    }
+
+    @Cacheable("getMRY")
+    fun getMRY(ticker: String, notAfter: LocalDate?): List<Fundamental> {
+        val dimension = "MRY"
+        return getForDimension(notAfter, dimension, ticker)
+    }
+
+    @Cacheable("getMRT")
+    fun getMRT(ticker: String, notAfter: LocalDate?): List<Fundamental> {
+        val dimension = "MRT"
+        return getForDimension(notAfter, dimension, ticker)
     }
 
     fun load() {
@@ -66,5 +69,23 @@ class FundamentalsService {
                                 log.info("Loaded batch $idx into MongoDB")
                             }
                 }
+    }
+
+    private fun getForDimension(
+            notAfter: LocalDate?,
+            dimension: String,
+            ticker: String
+    ): List<Fundamental> {
+        val notAfter = notAfter ?: LocalDate.now()
+        val reportperiodProperty = FundamentalRow::fundamental / Fundamental::reportperiod
+        val dimensionProperty = FundamentalRow::fundamental / Fundamental::dimension
+        val tickerProperty = FundamentalRow::fundamental / Fundamental::ticker
+        return fundamentals.find(
+                and(
+                        reportperiodProperty lte notAfter,
+                        dimensionProperty eq dimension,
+                        tickerProperty eq ticker
+                )
+        ).toList().sortedBy { it.fundamental.reportperiod }.map { it.fundamental }
     }
 }

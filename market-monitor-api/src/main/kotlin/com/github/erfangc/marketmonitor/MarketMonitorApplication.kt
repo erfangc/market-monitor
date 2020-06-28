@@ -1,5 +1,7 @@
 package com.github.erfangc.marketmonitor
 
+import com.github.erfangc.marketmonitor.analysis.companyreturn.models.CompanyReturnAnalysis
+import com.github.erfangc.marketmonitor.analysis.companyreturn.models.CompanyReturnAnalysisRequest
 import com.github.erfangc.marketmonitor.analysis.marketsummary.MarketSummary
 import com.github.erfangc.marketmonitor.analysis.pecontr.PriceToEarningContributor
 import com.github.erfangc.marketmonitor.dailymetrics.models.DailyMetric
@@ -44,6 +46,8 @@ private fun typescriptDefinitionText(): String {
 					DailyMetric::class,
 					Fundamental::class,
 					PriceToEarningContributor::class,
+					CompanyReturnAnalysis::class,
+					CompanyReturnAnalysisRequest::class,
 					Ticker::class
 			),
 			mappings = mapOf(

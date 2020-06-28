@@ -14,7 +14,7 @@ class FundamentalsController(private val fundamentalsService: FundamentalsServic
             @PathVariable ticker: String,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) notAfter: LocalDate? = null
     ): List<Fundamental> {
-        return fundamentalsService.getMrq(ticker, notAfter)
+        return fundamentalsService.getMRQ(ticker, notAfter)
     }
 
     @PostMapping
