@@ -18,15 +18,9 @@ Highcharts.theme = {
         '#aaeeee'
     ],
     chart: {
-        backgroundColor: {
-            linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
-            stops: [
-                [0, '#2a2a2b'],
-                [1, '#3e3e40']
-            ]
-        },
+        backgroundColor: '#141414',
         style: {
-            fontFamily: '\'Unica One\', sans-serif'
+            fontFamily: '\'Segoe UI\', Roboto, \'Helvetica Neue\', Arial, \'Noto Sans\', sans-serif, \'Apple Color Emoji\', \'Segoe UI Emoji\', \'Segoe UI Symbol\', \'Noto Color Emoji\';'
         },
         plotBorderColor: '#606063'
     },

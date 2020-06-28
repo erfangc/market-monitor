@@ -7,14 +7,19 @@ data class SubMarketSummary(
         val medianPe: Double,
         val marketCapWeightedPe: Double,
         val marketCap: Double,
+        val percentNegativeEarningMarketCapWeighted: Double,
+        val percentNegativeEarningUnweighted: Double,
+        val contributionToTotalMarketPe: Double,
         val tickerCount: Int
 )
 
 data class MarketSummary(
         val _id: String,
         val date: LocalDate,
-        val positiveNegativeRatio: Double,
-        val pe: Double,
+        val percentNegativeEarningMarketCapWeighted: Double,
+        val percentNegativeEarningUnweighted: Double,
+        val marketCapWeightedPe: Double,
+        val medianPe: Double,
         val peCount: Int,
         val totalMarketCap: Double,
         val sectorSummaries: List<SubMarketSummary>

@@ -2,6 +2,7 @@ import HighchartsReact from "highcharts-react-official";
 import {highcharts} from "../../highcharts";
 import React from "react";
 import moment from "moment";
+import {Card} from "antd";
 
 interface Props {
     marketSummaries: MarketSummary[]
@@ -12,7 +13,8 @@ export function PriceToEarningOvertime(props: Props) {
         .filter(({totalMarketCap}) => totalMarketCap !== 0);
     const options: Highcharts.Options = {
         title: {
-            text: 'Price to Earning Overtime'
+            text: 'Price to Earning Overtime',
+            align: "left"
         },
         xAxis: {
             type: 'datetime'
@@ -25,7 +27,13 @@ export function PriceToEarningOvertime(props: Props) {
             },
             {
                 title: {
-                    text: "Positive / Negative Earning Ratio"
+                    text: "% Negative Earning (Market Cap Weighted)"
+                },
+                opposite: true
+            },
+            {
+                title: {
+                    text: "% Negative Earning (Unweighted)"
                 },
                 opposite: true
             }
@@ -33,24 +41,44 @@ export function PriceToEarningOvertime(props: Props) {
         series: [
             {
                 type: 'spline',
-                name: 'Price to Earning',
+                name: 'Price to Earning (Market Cap Weighted)',
                 yAxis: 0,
                 data: marketSummaries
-                    .map(({date, pe}) => ({x: moment(date).valueOf(), y: pe}))
+                    .map(({date, marketCapWeightedPe}) => ({x: moment(date).valueOf(), y: marketCapWeightedPe}))
             },
             {
                 type: 'spline',
-                name: 'Positive / Negative Earning Ratio',
+                name: 'Price to Earning (Median)',
+                yAxis: 0,
+                data: marketSummaries
+                    .map(({date, medianPe}) => ({x: moment(date).valueOf(), y: medianPe}))
+            },
+            {
+                type: 'spline',
+                name: '% Negative Earning (Market Cap Weighted)',
                 yAxis: 1,
                 data: marketSummaries
-                    .map(({date, positiveNegativeRatio}) => ({x: moment(date).valueOf(), y: positiveNegativeRatio}))
+                    .map(({date, percentNegativeEarningMarketCapWeighted}) => (
+                        {x: moment(date).valueOf(), y: percentNegativeEarningMarketCapWeighted * 100}
+                    ))
+            },
+            {
+                type: 'spline',
+                name: '% Negative Earning (Unweighted)',
+                yAxis: 2,
+                data: marketSummaries
+                    .map(({date, percentNegativeEarningUnweighted}) => (
+                        {x: moment(date).valueOf(), y: percentNegativeEarningUnweighted * 100}
+                    ))
             }
         ]
     };
     return (
-        <HighchartsReact
-            highcharts={highcharts}
-            options={options}
-        />
+        <Card>
+            <HighchartsReact
+                highcharts={highcharts}
+                options={options}
+            />
+        </Card>
     )
 }

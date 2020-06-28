@@ -1,6 +1,7 @@
 import HighchartsReact from "highcharts-react-official";
 import {highcharts} from "../../highcharts";
 import React from "react";
+import {Card} from "antd";
 
 interface Props {
     marketSummary?: MarketSummary
@@ -16,7 +17,8 @@ export function SectorPriceToEarning(props: Props) {
             categories: sectorSummaries.map(({name}) => name)
         },
         title: {
-            text: 'Sector Relative Valuation'
+            text: 'Sector Relative Valuation',
+            align: "left"
         },
         yAxis: {
             title: {
@@ -44,9 +46,11 @@ export function SectorPriceToEarning(props: Props) {
     }
 
     return (
-        <HighchartsReact
-            highcharts={highcharts}
-            options={options}
-        />
+        <Card>
+            <HighchartsReact
+                highcharts={highcharts}
+                options={options}
+            />
+        </Card>
     )
 }

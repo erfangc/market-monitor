@@ -4,8 +4,8 @@ import {Col, Row, Spin} from "antd";
 import {PriceToEarningOvertime} from "./PriceToEarningOvertime";
 import {SectorPriceToEarning} from "./SectorPriceToEarning";
 import {PEBubbleChart} from "./PEBubbleChart";
-import {PEContributors} from "./PEContributors";
-import './MarketOverview.css';
+import {PEContributors} from "./PEContributors/PEContributors";
+import {SectorContributionOvertime} from "./SectorContributionOvertime";
 
 export function MarketOverview() {
 
@@ -39,6 +39,9 @@ export function MarketOverview() {
                 </Col>
                 <Col span={24}>
                     <PEContributors contributors={peContributors}/>
+                </Col>
+                <Col span={24}>
+                    <SectorContributionOvertime marketSummaries={marketSummaries}/>
                 </Col>
             </Row>
         </Spin>

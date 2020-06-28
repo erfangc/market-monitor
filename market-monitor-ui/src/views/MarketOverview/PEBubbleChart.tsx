@@ -3,6 +3,7 @@ import {highcharts} from "../../highcharts";
 
 import React from "react";
 import {numberFormat} from "highcharts";
+import {Card} from "antd";
 
 interface Props {
     marketSummary?: MarketSummary
@@ -13,7 +14,8 @@ export function PEBubbleChart(props: Props) {
 
     const options: Highcharts.Options = {
         title: {
-            text: 'Price to Earning vs. Market Cap'
+            text: 'Price to Earning vs. Market Cap',
+            align: "left"
         },
         xAxis: {
             title: {
@@ -69,10 +71,12 @@ export function PEBubbleChart(props: Props) {
     };
 
     return (
-        <HighchartsReact
-            highcharts={highcharts}
-            options={options}
-        />
+        <Card>
+            <HighchartsReact
+                highcharts={highcharts}
+                options={options}
+            />
+        </Card>
     );
 }
 

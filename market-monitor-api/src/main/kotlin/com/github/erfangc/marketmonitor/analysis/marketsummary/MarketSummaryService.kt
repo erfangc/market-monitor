@@ -45,7 +45,7 @@ class MarketSummaryService(private val tickerService: TickerService) {
         val negativePe = allMetrics.filter { (it.pe ?: 0.0) <= 0.0 }
         val positiveMc = positivePe.sumByDouble { it.marketcap ?: 0.0 }
         val negativeMc = negativePe.sumByDouble { it.marketcap ?: 0.0 }
-        val pe = positivePe.sumByDouble {
+        val marketCapWeightedPe = positivePe.sumByDouble {
             (it.pe ?: 0.0) * ((it.marketcap ?: 0.0) / positiveMc)
         }
 
@@ -57,28 +57,46 @@ class MarketSummaryService(private val tickerService: TickerService) {
                 _id = date.toString(),
                 date = date!!,
                 totalMarketCap = positiveMc + negativeMc,
-                pe = pe,
+                marketCapWeightedPe = marketCapWeightedPe,
+                medianPe = positivePe.mapNotNull { it.pe }.median(),
                 peCount = positivePe.size,
-                positiveNegativeRatio = positiveMc / negativeMc,
+                percentNegativeEarningMarketCapWeighted = negativeMc / (positiveMc + negativeMc),
+                percentNegativeEarningUnweighted = negativePe.size / (positivePe.size.toDouble() + negativePe.size.toDouble()),
                 sectorSummaries = sectorSummaries
         )
     }
 
-    private fun subMarketSummary(allMetrics: List<DailyMetric>, groupByFn: (DailyMetric) -> String): List<SubMarketSummary> {
-        return allMetrics.groupBy(groupByFn).map { (name, metrics) ->
-            val positivePe = metrics.filter { (it.pe ?: 0.0) > 0 }
-            val marketCapOfPositivePe = positivePe.sumByDouble { it.marketcap ?: 0.0 }
-            val marketCapWeightedPe = positivePe.sumByDouble {
-                (it.pe ?: 0.0) * (it.marketcap ?: 0.0) / marketCapOfPositivePe
-            }
-            SubMarketSummary(
-                    name = name,
-                    marketCap = metrics.sumByDouble { it.marketcap ?: 0.0 },
-                    marketCapWeightedPe = marketCapWeightedPe,
-                    medianPe = metrics.mapNotNull { it.pe }.median(),
-                    tickerCount = metrics.size
-            )
-        }
+    private fun subMarketSummary(
+            totalMktMetrics: List<DailyMetric>,
+            groupByFn: (DailyMetric) -> String
+    ): List<SubMarketSummary> {
+        return totalMktMetrics
+                .groupBy(groupByFn)
+                .map { (name, subMktMetrics) ->
+                    // Sub market standalone computations
+                    val subMarketWithPositivePe = subMktMetrics.filter { (it.pe ?: 0.0) > 0 }
+                    val subMarketWithPositivePeMktCap = subMarketWithPositivePe.sumByDouble { it.marketcap ?: 0.0 }
+                    val marketCapWeightedPe = subMarketWithPositivePe.sumByDouble {
+                        (it.pe ?: 0.0) * (it.marketcap ?: 0.0) / subMarketWithPositivePeMktCap
+                    }
+                    val subMarketTotalMktCap = subMktMetrics.sumByDouble { it.marketcap ?: 0.0 }
+
+                    // Contribution to total market computations
+                    val totalMarketMktCap = totalMktMetrics.sumByDouble { it.marketcap ?: 0.0 }
+                    val contributionToTotalMarketPe = subMarketWithPositivePe.sumByDouble {
+                        (it.pe ?: 0.0) * (it.marketcap ?: 0.0) / totalMarketMktCap
+                    }
+                    SubMarketSummary(
+                            name = name,
+                            marketCap = subMarketTotalMktCap,
+                            marketCapWeightedPe = marketCapWeightedPe,
+                            medianPe = subMarketWithPositivePe.mapNotNull { it.pe }.median(),
+                            tickerCount = subMktMetrics.size,
+                            percentNegativeEarningUnweighted = subMarketWithPositivePe.size / subMktMetrics.size.toDouble(),
+                            percentNegativeEarningMarketCapWeighted = 1 - subMarketWithPositivePeMktCap / subMarketTotalMktCap,
+                            contributionToTotalMarketPe = contributionToTotalMarketPe
+                    )
+                }
     }
 
 }

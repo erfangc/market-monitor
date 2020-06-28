@@ -1,17 +1,22 @@
 interface SubMarketSummary {
+    contributionToTotalMarketPe: number;
     marketCap: number;
     marketCapWeightedPe: number;
     medianPe: number;
     name: string;
+    percentNegativeEarningMarketCapWeighted: number;
+    percentNegativeEarningUnweighted: number;
     tickerCount: number;
 }
 
 interface MarketSummary {
     _id: string;
     date: Date;
-    pe: number;
+    marketCapWeightedPe: number;
+    medianPe: number;
     peCount: number;
-    positiveNegativeRatio: number;
+    percentNegativeEarningMarketCapWeighted: number;
+    percentNegativeEarningUnweighted: number;
     sectorSummaries: SubMarketSummary[];
     totalMarketCap: number;
 }
