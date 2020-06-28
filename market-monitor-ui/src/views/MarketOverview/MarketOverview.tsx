@@ -4,17 +4,22 @@ import {Col, Row, Spin} from "antd";
 import {PriceToEarningOvertime} from "./PriceToEarningOvertime";
 import {SectorPriceToEarning} from "./SectorPriceToEarning";
 import {PEBubbleChart} from "./PEBubbleChart";
+import {PEContributors} from "./PEContributors";
+import './MarketOverview.css';
 
 export function MarketOverview() {
 
     const [loading, setLoading] = useState<boolean>(false);
     const [marketSummaries, setMarketSummaries] = useState<MarketSummary[]>([])
+    const [peContributors, setPeContributors] = useState<PriceToEarningContributor[]>([])
 
     useEffect(() => {
         (async () => {
             setLoading(true);
             const {data} = await axios.get<MarketSummary[]>('/api/analysis/market-summaries');
+            const {data: apiPeContributors} = await axios.get<PriceToEarningContributor[]>('/api/price-to-earning-contributors');
             setMarketSummaries(data);
+            setPeContributors(apiPeContributors);
             setLoading(false);
         })()
     }, []);
@@ -31,6 +36,9 @@ export function MarketOverview() {
                 </Col>
                 <Col span={24}>
                     <PEBubbleChart marketSummary={marketSummary}/>
+                </Col>
+                <Col span={24}>
+                    <PEContributors contributors={peContributors}/>
                 </Col>
             </Row>
         </Spin>

@@ -91,6 +91,9 @@ Highcharts.theme = {
                 lineColor: '#333'
             }
         },
+        column: {
+            borderWidth: 0,
+        },
         boxplot: {
             fillColor: '#505053'
         },
@@ -179,7 +182,6 @@ Highcharts.theme = {
     navigator: {
         handles: {
             backgroundColor: '#666',
-            borderColor: '#AAA'
         },
         outlineColor: '#CCC',
         maskFill: 'rgba(255,255,255,0.1)',

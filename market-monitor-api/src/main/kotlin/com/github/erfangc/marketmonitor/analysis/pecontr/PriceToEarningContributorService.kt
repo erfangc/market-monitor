@@ -3,6 +3,7 @@ package com.github.erfangc.marketmonitor.analysis.pecontr
 import com.github.erfangc.marketmonitor.dailymetrics.DailyMetricsService.Companion.dailyMetrics
 import com.github.erfangc.marketmonitor.dailymetrics.models.DailyMetric
 import com.github.erfangc.marketmonitor.dailymetrics.models.DailyMetricRow
+import com.github.erfangc.marketmonitor.mostRecentWorkingDay
 import com.github.erfangc.marketmonitor.tickers.TickerService
 import org.litote.kmongo.div
 import org.litote.kmongo.eq
@@ -15,12 +16,19 @@ class PriceToEarningContributorService(
         private val tickerService: TickerService
 ) {
 
+    /**
+     * Find the largest contributor and distribution
+     * of contribution from individual companies to a sector / market's
+     * total market cap weighted P/E
+     */
     fun priceToEarningContributor(
             date: LocalDate?,
             sector: String? = null,
             industry: String? = null
     ): List<PriceToEarningContributor> {
-        val date = date ?: LocalDate.now()
+
+        val date = date ?: LocalDate.now().mostRecentWorkingDay()
+
         val rows = dailyMetrics
                 .find(DailyMetricRow::dailyMetric / DailyMetric::date eq date)
                 .toList()
@@ -46,6 +54,8 @@ class PriceToEarningContributorService(
                     )
                 }
                 .sortedByDescending { it.peContribution }
+                .take(200)
+
     }
 
 }

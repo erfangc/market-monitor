@@ -25,19 +25,36 @@ export function PEBubbleChart(props: Props) {
                 text: 'Market Cap Weighted P/E'
             }
         },
+        legend: {
+            enabled: false
+        },
+        tooltip: {
+            useHTML: true,
+            pointFormatter: function () {
+                // @ts-ignore
+                const z = this.z;
+                return `
+                    <table>
+                        <tbody>
+                        <tr>
+                            <td>Median P/E: </td>
+                            <td>${numberFormat(this.x, 2)}</td>
+                        </tr>
+                        <tr>
+                            <td>Market Cap Weighted P/E: </td>
+                            <td>${numberFormat(this.y ?? 0.0, 2)}</td>
+                        </tr>
+                        <tr>
+                            <td>Market Cap: </td>
+                            <td>${numberFormat(z ?? 0.0, 0)}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    `;
+            }
+        },
         series: [
             {
-                tooltip: {
-                    pointFormatter: function () {
-                        // @ts-ignore
-                        const z = this.z;
-                        return `
-                       <b>Median P/E: </b><span>${numberFormat(this.x, 2)}</span><br>
-                       <b>Market Cap Weighted P/E: </b><span>${numberFormat(this.y ?? 0.0, 2)}</span><br>
-                       <b>Market Cap: </b><span>${numberFormat(z ?? 0.0, 0)}</span>
-                        `;
-                    }
-                },
                 dataLabels: {
                     enabled: true,
                     formatter: function () {
