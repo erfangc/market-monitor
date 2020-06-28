@@ -16,6 +16,7 @@
     "antd": "^4.3.5",
     "axios": "^0.19.2",
     "highcharts": "^8.1.2",
+    "highcharts-more": "^0.1.7",
     "highcharts-react-official": "^3.0.0",
     "moment": "^2.27.0",
     "react": "^16.13.1",

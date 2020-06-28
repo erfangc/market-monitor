@@ -9,6 +9,7 @@ import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
 import org.slf4j.LoggerFactory
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 
 @Service
@@ -36,6 +37,7 @@ class TickerService {
         }
     }
 
+    @Cacheable("tickers")
     fun getTicker(ticker: String): Ticker? {
         return tickersCollection.findOne(TickerRow::ticker / Ticker::ticker eq ticker)?.ticker
     }

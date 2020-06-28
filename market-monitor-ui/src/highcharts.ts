@@ -1,4 +1,7 @@
 import Highcharts, {setOptions} from 'highcharts';
+import HighchartsMore from 'highcharts/highcharts-more';
+
+HighchartsMore(Highcharts);
 
 // @ts-ignore
 Highcharts.theme = {
@@ -204,3 +207,4 @@ Highcharts.theme = {
 setOptions(Highcharts.theme);
 
 export const highcharts = Highcharts;
+

@@ -14,9 +14,14 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 repositories {
 	mavenCentral()
 	jcenter()
+	maven(url = "https://jitpack.io")
 }
 
 dependencies {
+	// ts-generator
+	// https://github.com/ntrrgc/ts-generator
+	implementation("com.github.ntrrgc:ts-generator:1.1.1")
+
 	// CSV processor and data class mapper
 	implementation("com.github.doyaaaaaken:kotlin-csv-jvm:0.10.4")
 	implementation("com.vhl.blackmo:kotlin-grass-jvm:0.3.0")
@@ -30,7 +35,10 @@ dependencies {
 	// HttpClient from Apache
 	implementation("org.apache.httpcomponents:httpclient:4.5.12")
 
-	//	Spring Boot Dependencies
+	// Kotlin statistics extensions
+	implementation("org.nield:kotlin-statistics:1.2.1")
+
+	// Spring Boot Dependencies
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")

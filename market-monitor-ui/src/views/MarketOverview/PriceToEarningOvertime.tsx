@@ -1,15 +1,16 @@
-import {MarketSummary} from "./Models";
 import HighchartsReact from "highcharts-react-official";
 import {highcharts} from "../../highcharts";
 import React from "react";
+import moment from "moment";
 
 interface Props {
     marketSummaries: MarketSummary[]
 }
 
 export function PriceToEarningOvertime(props: Props) {
-    const {marketSummaries} = props;
-    const options = {
+    const marketSummaries = (props?.marketSummaries || [])
+        .filter(({totalMarketCap}) => totalMarketCap !== 0);
+    const options: Highcharts.Options = {
         title: {
             text: 'Price to Earning Overtime'
         },
@@ -19,7 +20,7 @@ export function PriceToEarningOvertime(props: Props) {
         yAxis: [
             {
                 title: {
-                    text: "Value"
+                    text: "Multiple"
                 }
             },
             {
@@ -35,16 +36,14 @@ export function PriceToEarningOvertime(props: Props) {
                 name: 'Price to Earning',
                 yAxis: 0,
                 data: marketSummaries
-                    .filter(({pe}) => !!pe)
-                    .map(({date, pe}) => ({x: new Date(date), y: pe}))
+                    .map(({date, pe}) => ({x: moment(date).valueOf(), y: pe}))
             },
             {
                 type: 'spline',
                 name: 'Positive / Negative Earning Ratio',
                 yAxis: 1,
                 data: marketSummaries
-                    .filter(({positiveNegativeRatio}) => !!positiveNegativeRatio)
-                    .map(({date, positiveNegativeRatio}) => ({x: new Date(date), y: positiveNegativeRatio}))
+                    .map(({date, positiveNegativeRatio}) => ({x: moment(date).valueOf(), y: positiveNegativeRatio}))
             }
         ]
     };

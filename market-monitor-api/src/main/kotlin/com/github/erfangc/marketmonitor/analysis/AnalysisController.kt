@@ -1,5 +1,6 @@
 package com.github.erfangc.marketmonitor.analysis
 
+import com.github.erfangc.marketmonitor.analysis.marketsummary.MarketSummary
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam

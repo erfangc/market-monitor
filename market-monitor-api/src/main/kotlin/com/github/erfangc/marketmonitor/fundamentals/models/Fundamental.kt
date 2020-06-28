@@ -191,7 +191,7 @@ data class Fundamental(
         // Accumulated Retained Earnings (Deficit)
         val retearn: String? = null,
         // Revenues
-        val revenue: String? = null,
+        val revenue: Double? = null,
         // Revenues (USD)
         val revenueusd: Double? = null,
         // Research and Development Expense

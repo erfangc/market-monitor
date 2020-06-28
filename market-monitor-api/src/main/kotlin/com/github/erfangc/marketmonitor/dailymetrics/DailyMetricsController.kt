@@ -1,5 +1,6 @@
 package com.github.erfangc.marketmonitor.dailymetrics
 
+import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -23,7 +24,10 @@ class DailyMetricsController constructor(
     }
 
     @PostMapping("_load_for_period")
-    fun loadForPeriod(@RequestParam startDate: LocalDate? = null, @RequestParam endDate: LocalDate = LocalDate.now()) {
+    fun loadForPeriod(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) startDate: LocalDate? = null,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) endDate: LocalDate = LocalDate.now()
+    ) {
         dailyMetricsService.loadForPeriod(startDate, endDate)
     }
 
