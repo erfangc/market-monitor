@@ -13,8 +13,7 @@ export function PriceToEarningOvertime(props: Props) {
         .filter(({totalMarketCap}) => totalMarketCap !== 0);
     const options: Highcharts.Options = {
         title: {
-            text: 'Price to Earning Overtime',
-            align: "left"
+            text: 'Price to Earning Overtime'
         },
         xAxis: {
             type: 'datetime'

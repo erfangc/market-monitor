@@ -47,12 +47,10 @@ export function SectorContributionOvertime(props: Props) {
 
     const options: Highcharts.Options = {
         title: {
-            text: 'P/E Contribution from Sector Overtime',
-            align: "left"
+            text: 'P/E Contribution from Sector Overtime'
         },
         subtitle: {
-            text: 'Market Cap Weighted',
-            align: "left"
+            text: 'Market Cap Weighted'
         },
         xAxis: {
             type: "datetime"

@@ -14,8 +14,7 @@ export function PEBubbleChart(props: Props) {
 
     const options: Highcharts.Options = {
         title: {
-            text: 'Price to Earning vs. Market Cap',
-            align: "left"
+            text: 'Price to Earning vs. Market Cap'
         },
         xAxis: {
             title: {

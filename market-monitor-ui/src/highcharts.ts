@@ -13,9 +13,9 @@ Highcharts.theme = {
         '#ff0066',
         '#eeaaee',
         '#55BF3B',
-        '#DF5353',
-        '#7798BF',
-        '#aaeeee'
+        '#a906e2',
+        '#0027f3',
+        '#e0af2d'
     ],
     chart: {
         backgroundColor: '#141414',
@@ -27,12 +27,14 @@ Highcharts.theme = {
     title: {
         style: {
             color: '#E0E0E3'
-        }
+        },
+        align: 'left'
     },
     subtitle: {
         style: {
             color: '#E0E0E3'
-        }
+        },
+        align: 'left'
     },
     xAxis: {
         gridLineColor: '#707073',
@@ -78,11 +80,9 @@ Highcharts.theme = {
             dataLabels: {
                 color: '#F0F0F3',
                 style: {
-                    fontSize: '13px'
+                    fontSize: '13px',
+                    fontWeight: 'normal'
                 }
-            },
-            marker: {
-                lineColor: '#333'
             }
         },
         column: {

@@ -17,8 +17,7 @@ export function SectorPriceToEarning(props: Props) {
             categories: sectorSummaries.map(({name}) => name)
         },
         title: {
-            text: 'Sector Relative Valuation',
-            align: "left"
+            text: 'Sector Relative Valuation'
         },
         yAxis: {
             title: {
