@@ -7,20 +7,22 @@ HighchartsMore(Highcharts);
 Highcharts.theme = {
     colors: [
         '#2b908f',
-        '#f45b5b',
+        '#a906e2',
         '#7798BF',
+        '#55BF3B',
+        '#0027f3',
+        '#f45b5b',
         '#aaeeee',
         '#ff0066',
         '#eeaaee',
-        '#55BF3B',
-        '#a906e2',
-        '#0027f3',
         '#e0af2d'
     ],
     chart: {
         backgroundColor: '#141414',
         style: {
-            fontFamily: '\'Segoe UI\', Roboto, \'Helvetica Neue\', Arial, \'Noto Sans\', sans-serif, \'Apple Color Emoji\', \'Segoe UI Emoji\', \'Segoe UI Symbol\', \'Noto Color Emoji\';'
+            fontFamily: '\'Segoe UI\', Roboto, \'Helvetica Neue\',' +
+                ' Arial, \'Noto Sans\', sans-serif, \'Apple Color Emoji\',' +
+                ' \'Segoe UI Emoji\', \'Segoe UI Symbol\', \'Noto Color Emoji\';'
         },
         plotBorderColor: '#606063'
     },

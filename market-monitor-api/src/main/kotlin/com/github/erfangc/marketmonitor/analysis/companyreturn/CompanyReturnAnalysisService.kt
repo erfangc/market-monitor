@@ -1,10 +1,8 @@
 package com.github.erfangc.marketmonitor.analysis.companyreturn
 
-import com.github.erfangc.marketmonitor.analysis.companyreturn.models.CompanyReturnAnalysis
-import com.github.erfangc.marketmonitor.analysis.companyreturn.models.CompanyReturnAnalysisRequest
-import com.github.erfangc.marketmonitor.analysis.companyreturn.models.GoalSeekFunctionInputs
-import com.github.erfangc.marketmonitor.analysis.companyreturn.models.PricingFunctionInputs
+import com.github.erfangc.marketmonitor.analysis.companyreturn.models.*
 import com.github.erfangc.marketmonitor.fundamentals.FundamentalsService
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -19,12 +17,17 @@ class CompanyReturnAnalysisService(
 
     private fun yearFrac(from: LocalDate, to: LocalDate) = ChronoUnit.DAYS.between(from, to) / 365.2425
 
+    private val log = LoggerFactory.getLogger(CompanyReturnAnalysisService::class.java)
+
     internal data class PvFromShortTerm(val pv: Double, val valuationDate: LocalDate, val eps: Double)
 
     fun companyReturnAnalysis(request: CompanyReturnAnalysisRequest): CompanyReturnAnalysis {
         val date = request.date
         val ticker = request.ticker
         val mrt = fundamentalsService.getMRT(ticker = ticker, notAfter = date)
+        val longTermGrowth = request.longTermGrowth
+        val shortTermEpsGrowth = request.shortTermEpsGrowths
+
         if (mrt.isEmpty()) {
             error("Dimension MRT Fundamental data is unavailable for $ticker on $date")
         }
@@ -32,7 +35,7 @@ class CompanyReturnAnalysisService(
 
         val eps = fundamental.eps ?: error("EPS is unavailable for $ticker on $date")
         val bvps = fundamental.bvps ?: error("BVPS is unavailable for $ticker on $date")
-        val price = fundamental.price ?: error("Price is unavailable for $ticker on $date")
+        val price = request.price ?: fundamental.price ?: error("Price is unavailable for $ticker on $date")
 
         val fn = goalSeekFunctionGenerator(
                 inputs = GoalSeekFunctionInputs(
@@ -40,12 +43,22 @@ class CompanyReturnAnalysisService(
                         bvps = bvps,
                         eps = eps,
                         price = price,
-                        longTermGrowth = request.longTermGrowth,
-                        shortTermEpsGrowths = request.shortTermEpsGrowths
+                        longTermGrowth = longTermGrowth,
+                        shortTermEpsGrowths = shortTermEpsGrowth
                 )
         )
 
         val expectedReturn = bisection(min = 0.0, max = 1.0, fn = fn)
+        val pricingFunctionOutputs = pricingFunction(
+                PricingFunctionInputs(
+                        date = date,
+                        bvps = bvps,
+                        eps = eps,
+                        longTermGrowth = longTermGrowth,
+                        discountRate = expectedReturn,
+                        shortTermEpsGrowth = shortTermEpsGrowth
+                )
+        )
 
         return CompanyReturnAnalysis(
                 date = date,
@@ -53,9 +66,10 @@ class CompanyReturnAnalysisService(
                 eps = eps,
                 bvps = bvps,
                 priceToEarning = price / eps,
-                shortTermEpsGrowths = request.shortTermEpsGrowths,
+                shortTermEpsGrowths = shortTermEpsGrowth,
                 expectedReturn = expectedReturn,
-                longTermGrowth = request.longTermGrowth
+                longTermGrowth = longTermGrowth,
+                pricingFunctionOutputs = pricingFunctionOutputs
         )
     }
 
@@ -77,7 +91,7 @@ class CompanyReturnAnalysisService(
                             longTermGrowth = inputs.longTermGrowth,
                             shortTermEpsGrowth = inputs.shortTermEpsGrowths
                     )
-            ) - inputs.price
+            ).price - inputs.price
         }
     }
 
@@ -87,6 +101,7 @@ class CompanyReturnAnalysisService(
      * @param max the upper bound for guess
      */
     private fun bisection(min: Double, max: Double, fn: (Double) -> Double): Double {
+
         //
         // use bi-section method on fn(r)
         // assume r must be between 0% and 100%
@@ -112,6 +127,10 @@ class CompanyReturnAnalysisService(
             iter++
         } while (iter < maxIter && abs(epislon) > tolerance)
 
+        if (iter == maxIter && abs(epislon) > tolerance) {
+            log.error("Goal seek algorithm did not converge within $iter iterations, epislon=$epislon")
+        }
+
         return mid
     }
 
@@ -121,7 +140,7 @@ class CompanyReturnAnalysisService(
      *
      * here discount rate is an input
      */
-    private fun pricingFunction(inputs: PricingFunctionInputs): Double {
+    private fun pricingFunction(inputs: PricingFunctionInputs): PricingFunctionOutputs {
         val bvps = inputs.bvps
         val date = inputs.date
         val discountRate = inputs.discountRate
@@ -134,7 +153,10 @@ class CompanyReturnAnalysisService(
             val yearFrac = yearFrac(date, stgDate)
             val discountFactor = 1 / (1 + discountRate).pow(yearFrac)
             val lastEps = if (acc.isEmpty()) eps else acc.last().eps
-            val newEps = lastEps * (1 + stg.growthRate)
+
+            val newEps = if (stg.growthRate != null) lastEps * (1 + stg.growthRate) else stg.eps
+                    ?: error("Either growthRate or eps must be provided")
+
             acc + PvFromShortTerm(pv = newEps * discountFactor, valuationDate = stgDate, eps = newEps)
         }
 
@@ -142,11 +164,23 @@ class CompanyReturnAnalysisService(
         val terminalValue = lastEps / (discountRate - longTermGrowth)
         val lastValuationDate = if (pvsFromShortTerm.isEmpty()) date else pvsFromShortTerm.last().valuationDate
         val terminalDiscountFactor = 1 / (1 + discountRate).pow(yearFrac(date, lastValuationDate))
-        val discountedTerminalValue = terminalValue * terminalDiscountFactor
-        val pvFromShortTerm = pvsFromShortTerm.sumByDouble { it.pv }
+        val contributionFromTerminalValue = terminalValue * terminalDiscountFactor
+        val contributionFromShortTerm = pvsFromShortTerm.sumByDouble { it.pv }
 
         // share price = current book value + short-term growth + terminal value
-        return bvps + pvFromShortTerm + discountedTerminalValue
+        val price = bvps + contributionFromShortTerm + contributionFromTerminalValue
+
+        val contributionFromCurrentEarnings = eps / discountRate
+        val contributionFromGrowth = price - contributionFromCurrentEarnings - bvps
+
+        return PricingFunctionOutputs(
+                price = price,
+                contributionFromBvps = bvps,
+                contributionFromCurrentEarnings = contributionFromCurrentEarnings,
+                contributionFromGrowth = contributionFromGrowth,
+                contributionFromShortTerm = contributionFromShortTerm,
+                contributionFromTerminalValue = contributionFromTerminalValue
+        )
     }
 
 }

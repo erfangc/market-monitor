@@ -5,6 +5,7 @@ import java.time.LocalDate
 data class CompanyReturnAnalysis(
         val ticker: String,
         val date: LocalDate,
+        val pricingFunctionOutputs: PricingFunctionOutputs,
         val shortTermEpsGrowths: List<ShortTermEpsGrowth>,
         val longTermGrowth: Double,
         val bvps: Double,

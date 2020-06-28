@@ -158,6 +158,15 @@ interface PriceToEarningContributor {
     ticker: string;
 }
 
+interface PricingFunctionOutputs {
+    contributionFromBvps: number;
+    contributionFromCurrentEarnings: number;
+    contributionFromGrowth: number;
+    contributionFromShortTerm: number;
+    contributionFromTerminalValue: number;
+    price: number;
+}
+
 interface Scenario {
     expectedReturn: number;
     longTermGrowth: number;
@@ -176,6 +185,7 @@ interface CompanyReturnAnalysis {
     expectedReturn: number;
     longTermGrowth: number;
     priceToEarning: number;
+    pricingFunctionOutputs: PricingFunctionOutputs;
     scenarios: Scenario[];
     shortTermEpsGrowths: ShortTermEpsGrowth[];
     ticker: string;
@@ -184,6 +194,7 @@ interface CompanyReturnAnalysis {
 interface CompanyReturnAnalysisRequest {
     date: Date;
     longTermGrowth: number;
+    price: number | null;
     shortTermEpsGrowths: ShortTermEpsGrowth[];
     ticker: string;
 }
