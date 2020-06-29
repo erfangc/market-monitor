@@ -21,6 +21,10 @@ class CompanyReturnAnalysisService(
 
     internal data class PvFromShortTerm(val pv: Double, val valuationDate: LocalDate, val eps: Double)
 
+    /**
+     * Compute the discount rate required to equate price to today's price
+     * given all the assumptions
+     */
     fun companyReturnAnalysis(request: CompanyReturnAnalysisRequest): CompanyReturnAnalysis {
         val date = request.date
         val ticker = request.ticker
@@ -48,14 +52,14 @@ class CompanyReturnAnalysisService(
                 )
         )
 
-        val expectedReturn = bisection(min = 0.0, max = 1.0, fn = fn)
+        val discountRate = bisection(min = 0.0, max = 1.0, fn = fn)
         val pricingFunctionOutputs = pricingFunction(
                 PricingFunctionInputs(
                         date = date,
                         bvps = bvps,
                         eps = eps,
                         longTermGrowth = longTermGrowth,
-                        discountRate = expectedReturn,
+                        discountRate = discountRate,
                         shortTermEpsGrowth = shortTermEpsGrowth
                 )
         )
@@ -67,7 +71,7 @@ class CompanyReturnAnalysisService(
                 bvps = bvps,
                 priceToEarning = price / eps,
                 shortTermEpsGrowths = shortTermEpsGrowth,
-                expectedReturn = expectedReturn,
+                expectedReturn = discountRate,
                 longTermGrowth = longTermGrowth,
                 pricingFunctionOutputs = pricingFunctionOutputs
         )

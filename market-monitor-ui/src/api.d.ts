@@ -175,7 +175,8 @@ interface Scenario {
 
 interface ShortTermEpsGrowth {
     date: Date;
-    growthRate: number;
+    eps: number | null;
+    growthRate: number | null;
 }
 
 interface CompanyReturnAnalysis {
