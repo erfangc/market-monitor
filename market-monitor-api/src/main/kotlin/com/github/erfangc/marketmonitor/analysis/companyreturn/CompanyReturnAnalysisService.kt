@@ -52,7 +52,7 @@ class CompanyReturnAnalysisService(
                 )
         )
 
-        val discountRate = bisection(min = 0.0, max = 1.0, fn = fn)
+        val discountRate = bisection(initialMin = longTermGrowth, initialMax = 1.0, fn = fn)
         val pricingFunctionOutputs = pricingFunction(
                 PricingFunctionInputs(
                         date = date,
@@ -104,7 +104,7 @@ class CompanyReturnAnalysisService(
      * @param min the lower bound of guess
      * @param max the upper bound for guess
      */
-    private fun bisection(min: Double, max: Double, fn: (Double) -> Double): Double {
+    private fun bisection(initialMin: Double, initialMax: Double, fn: (Double) -> Double): Double {
 
         //
         // use bi-section method on fn(r)
@@ -113,18 +113,17 @@ class CompanyReturnAnalysisService(
         val maxIter = 1000
         val tolerance = 0.001
         var iter = 0
-        var guess0 = min
-        var guess1 = max
         var epislon: Double
+        var min = initialMin
+        var max = initialMax
         var mid: Double
-
         do {
-            mid = (guess0 + guess1) / 2.0
+            mid = (min + max) / 2.0
             epislon = fn(mid)
             if (epislon < 0) {
-                guess1 = mid
+                max = mid
             } else if (epislon > 0) {
-                guess0 = mid
+                min = mid
             } else {
                 break
             }
