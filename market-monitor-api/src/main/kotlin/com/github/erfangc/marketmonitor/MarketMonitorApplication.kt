@@ -51,7 +51,7 @@ private fun typescriptDefinitionText(): String {
 					Ticker::class
 			),
 			mappings = mapOf(
-					LocalDate::class to "Date"
-			)
+                    LocalDate::class to "string"
+            )
 	).definitionsText
 }

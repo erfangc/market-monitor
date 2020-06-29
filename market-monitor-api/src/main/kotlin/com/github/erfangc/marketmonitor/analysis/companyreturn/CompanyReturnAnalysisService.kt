@@ -2,6 +2,7 @@ package com.github.erfangc.marketmonitor.analysis.companyreturn
 
 import com.github.erfangc.marketmonitor.analysis.companyreturn.models.*
 import com.github.erfangc.marketmonitor.fundamentals.FundamentalsService
+import com.github.erfangc.marketmonitor.mostRecentWorkingDay
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -26,7 +27,7 @@ class CompanyReturnAnalysisService(
      * given all the assumptions
      */
     fun companyReturnAnalysis(request: CompanyReturnAnalysisRequest): CompanyReturnAnalysis {
-        val date = request.date
+        val date = request.date ?: LocalDate.now().mostRecentWorkingDay()
         val ticker = request.ticker
         val mrt = fundamentalsService.getMRT(ticker = ticker, notAfter = date)
         val longTermGrowth = request.longTermGrowth

@@ -1,22 +1,24 @@
 import Highcharts, {setOptions} from 'highcharts';
 import HighchartsMore from 'highcharts/highcharts-more';
 
+export const colors = [
+    '#2b908f',
+    '#a906e2',
+    '#7798BF',
+    '#55BF3B',
+    '#0027f3',
+    '#f45b5b',
+    '#aaeeee',
+    '#ff0066',
+    '#eeaaee',
+    '#e0af2d'
+];
+
 HighchartsMore(Highcharts);
 
 // @ts-ignore
 Highcharts.theme = {
-    colors: [
-        '#2b908f',
-        '#a906e2',
-        '#7798BF',
-        '#55BF3B',
-        '#0027f3',
-        '#f45b5b',
-        '#aaeeee',
-        '#ff0066',
-        '#eeaaee',
-        '#e0af2d'
-    ],
+    colors,
     chart: {
         backgroundColor: '#141414',
         style: {
@@ -72,7 +74,8 @@ Highcharts.theme = {
         }
     },
     tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.85)',
+        borderWidth: 0,
+        backgroundColor: 'rgba(0,0,0,0.85)',
         style: {
             color: '#F0F0F0'
         }

@@ -1,8 +1,9 @@
 import React from 'react';
 import {Layout, Menu} from "antd";
-import {Route, useLocation, Redirect} from "react-router";
+import {Route, useLocation} from "react-router";
 import {Link} from "react-router-dom";
 import {MarketOverview} from "./views/MarketOverview/MarketOverview";
+import {ExpectedReturn} from "./views/ExpectedReturn/ExpectedReturn";
 
 
 function App() {
@@ -17,14 +18,11 @@ function App() {
                     <Menu.Item key="/expected-return">
                         <Link to="/expected-return">Expected Return</Link>
                     </Menu.Item>
-                    <Menu.Item key="/relative-value">
-                        <Link to="/relative-value">Relative Value</Link>
-                    </Menu.Item>
                 </Menu>
             </Layout.Header>
             <Layout.Content style={{ padding: '24px' }}>
                 <Route path="/market-overview" component={MarketOverview}/>
-                <Redirect path="*" to="/market-overview"/>
+                <Route path="/expected-return" component={ExpectedReturn}/>
             </Layout.Content>
         </Layout>
     );

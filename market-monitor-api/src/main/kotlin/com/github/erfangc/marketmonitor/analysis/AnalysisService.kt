@@ -2,7 +2,6 @@ package com.github.erfangc.marketmonitor.analysis
 
 import com.github.erfangc.marketmonitor.analysis.marketsummary.MarketSummary
 import com.github.erfangc.marketmonitor.analysis.marketsummary.MarketSummaryService
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -14,7 +13,6 @@ import kotlin.streams.toList
 @Service
 class AnalysisService(private val marketSummaryService: MarketSummaryService) {
 
-    private val log = LoggerFactory.getLogger(AnalysisService::class.java)
     private val executor = Executors.newCachedThreadPool()
 
     fun marketSummaries(startDate: LocalDate? = null, endDate: LocalDate = LocalDate.now()): List<MarketSummary> {
@@ -26,13 +24,11 @@ class AnalysisService(private val marketSummaryService: MarketSummaryService) {
                     executor.submit(computeMarketSummariesFor(chunk))
                 }.map { it.get() }
                 .flatten()
-        log.info("Finished computing cross sectionals")
         return ret.toList()
     }
 
     private fun computeMarketSummariesFor(chunk: List<LocalDate>): Callable<List<MarketSummary>> {
         return Callable {
-            log.info("Computing ${MarketSummary::class.simpleName} for ${chunk.size} dates")
             chunk.filter {
                 it.dayOfWeek != DayOfWeek.SATURDAY && it.dayOfWeek != DayOfWeek.SUNDAY
             }.map { date ->

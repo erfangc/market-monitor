@@ -11,7 +11,7 @@ interface SubMarketSummary {
 
 interface MarketSummary {
     _id: string;
-    date: Date;
+    date: string;
     marketCapWeightedPe: number;
     medianPe: number;
     peCount: number;
@@ -22,11 +22,11 @@ interface MarketSummary {
 }
 
 interface DailyMetric {
-    date: Date;
+    date: string;
     ev: number | null;
     evebit: number | null;
     evebitda: number | null;
-    lastupdated: Date;
+    lastupdated: string;
     marketcap: number | null;
     pb: number | null;
     pe: number | null;
@@ -42,14 +42,14 @@ interface Fundamental {
     assetsnc: string | null;
     assetturnover: number | null;
     bvps: number | null;
-    calendardate: Date;
+    calendardate: string;
     capex: string | null;
     cashneq: string | null;
     cashnequsd: number | null;
     consolinc: string | null;
     cor: string | null;
     currentratio: number | null;
-    datekey: Date;
+    datekey: string;
     de: number | null;
     debt: string | null;
     debtc: string | null;
@@ -89,7 +89,7 @@ interface Fundamental {
     investments: string | null;
     investmentsc: string | null;
     investmentsnc: string | null;
-    lastupdated: Date;
+    lastupdated: string;
     liabilities: string | null;
     liabilitiesc: string | null;
     liabilitiesnc: string | null;
@@ -123,7 +123,7 @@ interface Fundamental {
     ps: number | null;
     ps1: number | null;
     receivables: string | null;
-    reportperiod: Date;
+    reportperiod: string;
     retearn: string | null;
     revenue: number | null;
     revenueusd: number | null;
@@ -174,14 +174,14 @@ interface Scenario {
 }
 
 interface ShortTermEpsGrowth {
-    date: Date;
+    date: string;
     eps: number | null;
     growthRate: number | null;
 }
 
 interface CompanyReturnAnalysis {
     bvps: number;
-    date: Date;
+    date: string;
     eps: number;
     expectedReturn: number;
     longTermGrowth: number;
@@ -193,7 +193,7 @@ interface CompanyReturnAnalysis {
 }
 
 interface CompanyReturnAnalysisRequest {
-    date: Date;
+    date: string | null;
     longTermGrowth: number;
     price: number | null;
     shortTermEpsGrowths: ShortTermEpsGrowth[];
@@ -208,14 +208,14 @@ interface Ticker {
     exchange: string | null;
     famaindustry: string | null;
     famasector: string | null;
-    firstadded: Date | null;
-    firstpricedate: Date | null;
-    firstquarter: Date | null;
+    firstadded: string | null;
+    firstpricedate: string | null;
+    firstquarter: string | null;
     industry: string | null;
     isdelisted: string | null;
-    lastpricedate: Date | null;
-    lastquarter: Date | null;
-    lastupdated: Date | null;
+    lastpricedate: string | null;
+    lastquarter: string | null;
+    lastupdated: string | null;
     location: string | null;
     name: string | null;
     permaticker: string;
