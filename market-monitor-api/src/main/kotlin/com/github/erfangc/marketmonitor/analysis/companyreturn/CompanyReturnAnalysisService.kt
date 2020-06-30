@@ -1,8 +1,10 @@
 package com.github.erfangc.marketmonitor.analysis.companyreturn
 
+import com.github.erfangc.marketmonitor.alphavantage.AlphaVantageService
 import com.github.erfangc.marketmonitor.analysis.companyreturn.models.*
 import com.github.erfangc.marketmonitor.fundamentals.FundamentalsService
 import com.github.erfangc.marketmonitor.mostRecentWorkingDay
+import com.github.erfangc.marketmonitor.yfinance.YFinanceService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -13,7 +15,9 @@ import kotlin.math.pow
 @Service
 @ExperimentalStdlibApi
 class CompanyReturnAnalysisService(
-        private val fundamentalsService: FundamentalsService
+        private val fundamentalsService: FundamentalsService,
+        private val yFinanceService: YFinanceService,
+        private val alphaVantageService: AlphaVantageService
 ) {
 
     private fun yearFrac(from: LocalDate, to: LocalDate) = ChronoUnit.DAYS.between(from, to) / 365.2425
@@ -21,6 +25,39 @@ class CompanyReturnAnalysisService(
     private val log = LoggerFactory.getLogger(CompanyReturnAnalysisService::class.java)
 
     internal data class PvFromShortTerm(val pv: Double, val valuationDate: LocalDate, val eps: Double)
+
+    fun getCompanyReturnAnalysisRequest(ticker: String): CompanyReturnAnalysisRequest {
+        val rows = yFinanceService.getEarningsEstimate(ticker)
+
+        val forYear = { date: LocalDate ->
+            val adjective = if (date.year == LocalDate.now().year) "Current" else "Next"
+            "$adjective Year (${date.year})"
+        }
+
+        val row = rows
+                .find { it["Earnings Estimate"] == "Avg. Estimate" } ?: emptyMap()
+
+        val currentYear = LocalDate.now()
+        val nextYear = currentYear.plusYears(1)
+        val shortTermEpsGrowths = listOf(currentYear, nextYear).map {
+            ShortTermEpsGrowth(
+                    date = it,
+                    eps = row[forYear(it)]?.toDoubleOrNull()
+            )
+        }
+
+        val date = LocalDate.now()
+        val price = alphaVantageService.getPrice(ticker)
+
+        return CompanyReturnAnalysisRequest(
+                ticker = ticker,
+                date = date,
+                longTermGrowth = 0.03,
+                shortTermEpsGrowths = shortTermEpsGrowths,
+                price = price
+        )
+
+    }
 
     /**
      * Compute the discount rate required to equate price to today's price

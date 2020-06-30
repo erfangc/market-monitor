@@ -2,10 +2,7 @@ package com.github.erfangc.marketmonitor.analysis.companyreturn
 
 import com.github.erfangc.marketmonitor.analysis.companyreturn.models.CompanyReturnAnalysis
 import com.github.erfangc.marketmonitor.analysis.companyreturn.models.CompanyReturnAnalysisRequest
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @ExperimentalStdlibApi
@@ -16,5 +13,10 @@ class CompanyReturnAnalysisController(
     @PostMapping
     fun companyReturnAnalysis(@RequestBody request: CompanyReturnAnalysisRequest): CompanyReturnAnalysis {
         return companyReturnAnalysisService.companyReturnAnalysis(request)
+    }
+
+    @GetMapping("request/{ticker}")
+    fun getCompanyReturnAnalysisRequest(@PathVariable ticker: String): CompanyReturnAnalysisRequest {
+        return companyReturnAnalysisService.getCompanyReturnAnalysisRequest(ticker)
     }
 }

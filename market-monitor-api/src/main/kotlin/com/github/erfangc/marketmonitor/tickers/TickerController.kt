@@ -4,7 +4,8 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("tickers")
-class TickersLoaderController(private val tickersService: TickerService) {
+class TickerController(private val tickersService: TickerService) {
+
     @ExperimentalStdlibApi
     @PostMapping
     fun loadTickers() {
@@ -14,5 +15,10 @@ class TickersLoaderController(private val tickersService: TickerService) {
     @GetMapping("{ticker}")
     fun getTicker(@PathVariable ticker: String): Ticker? {
         return tickersService.getTicker(ticker)
+    }
+
+    @GetMapping("_match")
+    fun matchTicker(@RequestParam term: String): List<Ticker> {
+        return tickersService.matchTicker(term)
     }
 }

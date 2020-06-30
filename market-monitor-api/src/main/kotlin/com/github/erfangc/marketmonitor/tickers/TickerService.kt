@@ -2,6 +2,7 @@ package com.github.erfangc.marketmonitor.tickers
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.github.erfangc.marketmonitor.io.MongoDB
+import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Indexes
 import com.vhl.blackmo.grass.dsl.grass
 import org.litote.kmongo.div
@@ -22,12 +23,12 @@ class TickerService {
     fun loadTickers() {
         tickersCollection.drop()
         tickersCollection.createIndex(Indexes.hashed((TickerRow::ticker / Ticker::ticker).name))
+        tickersCollection.createIndex(Indexes.text((TickerRow::ticker / Ticker::ticker).name))
         csvReader().open("/Users/erfangchen/Downloads/SHARADAR_TICKERS_6cc728d11002ab9cb99aa8654a6b9f4e.csv") {
             grass<Ticker>()
                     .harvest(readAllWithHeaderAsSequence())
                     .chunked(10000)
-                    .forEachIndexed {
-                        idx, chunk ->
+                    .forEachIndexed { idx, chunk ->
                         val rows = chunk.map {
                             TickerRow(_id = "${it.table}:${it.permaticker}:${it.ticker}", ticker = it)
                         }
@@ -37,9 +38,14 @@ class TickerService {
         }
     }
 
-    @Cacheable("tickers")
+    @Cacheable("getTickers")
     fun getTicker(ticker: String): Ticker? {
         return tickersCollection.findOne(TickerRow::ticker / Ticker::ticker eq ticker)?.ticker
+    }
+
+    @Cacheable("matchTicker")
+    fun matchTicker(term: String): List<Ticker> {
+        return tickersCollection.find(Filters.text(term)).map { it.ticker }.toList()
     }
 
 }

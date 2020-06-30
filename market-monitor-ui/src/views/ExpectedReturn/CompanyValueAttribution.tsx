@@ -2,6 +2,7 @@ import React from 'react';
 import {Col, Row} from "antd";
 import HighchartsReact from "highcharts-react-official";
 import {colors, highcharts} from "../../highcharts";
+import {numberFormat} from "highcharts";
 
 interface Props {
     companyReturnAnalysis?: CompanyReturnAnalysis
@@ -23,12 +24,29 @@ export function CompanyValueAttribution(
         },
         legend: {
             enabled: false
+        },
+        plotOptions: {
+            waterfall: {
+                dataLabels: {
+                    useHTML: true,
+                    enabled: true,
+                    formatter: function () {
+                        const monetary = this.point.y ?? 0;
+                        const percentage = monetary * 100 / (pricingFnOutputs?.price ?? 0.0);
+                        return `
+                        ${numberFormat(percentage, 1)}%
+                        </br>
+                        $${numberFormat(monetary, 1)}
+                        `;
+                    }
+                }
+            }
         }
     };
 
-    const options: Highcharts.Options = {
+    const shortLongTerm: Highcharts.Options = {
         title: {
-            text: 'Short vs. Long-Term Value'
+            text: 'Value from Short vs. Long Term'
         },
         ...commonOptions,
         series: [
@@ -59,14 +77,14 @@ export function CompanyValueAttribution(
             }
         ]
     };
-    const options2: Highcharts.Options = {
+    const valueVsGrowth: Highcharts.Options = {
         title: {
-            text: 'Existing Operation vs. Value from Growth'
+            text: 'Value from Current Operation vs. Value from Growth'
         },
         ...commonOptions,
         series: [
             {
-                name: 'Contributions',
+                name: 'Value from Current Operation vs. Value from Growth',
                 type: 'waterfall',
                 data: [
                     {
@@ -96,10 +114,10 @@ export function CompanyValueAttribution(
     return (
         <Row gutter={[16, 16]}>
             <Col span={12}>
-                <HighchartsReact highcharts={highcharts} options={options}/>
+                <HighchartsReact highcharts={highcharts} options={shortLongTerm}/>
             </Col>
             <Col span={12}>
-                <HighchartsReact highcharts={highcharts} options={options2}/>
+                <HighchartsReact highcharts={highcharts} options={valueVsGrowth}/>
             </Col>
         </Row>
     );
