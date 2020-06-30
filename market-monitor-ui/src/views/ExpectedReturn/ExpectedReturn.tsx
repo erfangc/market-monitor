@@ -3,8 +3,12 @@ import {Card, Col, Descriptions, Row, Space, Statistic} from "antd";
 import {Inputs} from "./Inputs";
 import axios from 'axios';
 import {CompanyValueAttribution} from "./CompanyValueAttribution";
+import {useParams} from "react-router";
 
 export function ExpectedReturn() {
+
+    const {ticker: symbol} = useParams<{ ticker?: string }>();
+
     const [
         companyReturnAnalysis,
         setCompanyReturnAnalysis
@@ -27,15 +31,18 @@ export function ExpectedReturn() {
             <Col span={8}>
                 <Row gutter={[16, 16]}>
                     <Col span={24}>
-                        <Inputs onChange={runCompanyAnalysis}/>
+                        <Inputs ticker={symbol} onChange={runCompanyAnalysis}/>
                     </Col>
                     <Col span={24}>
                         <Descriptions bordered>
                             <Descriptions.Item label="Name" span={3}>
                                 {ticker?.name ?? '-'}
                             </Descriptions.Item>
-                            <Descriptions.Item label="Category" span={3}>
+                            <Descriptions.Item label="Category" span={2}>
                                 {ticker?.category ?? '-'}
+                            </Descriptions.Item>
+                            <Descriptions.Item label="SEC Filings" span={1}>
+                                <a href={`${ticker?.secfilings}`}>Link to SEC</a>
                             </Descriptions.Item>
                             <Descriptions.Item label="Sector" span={2}>
                                 {ticker?.sector ?? '-'}
@@ -48,9 +55,6 @@ export function ExpectedReturn() {
                             </Descriptions.Item>
                             <Descriptions.Item label="FAMA Sector" span={2}>
                                 {ticker?.sector ?? '-'}
-                            </Descriptions.Item>
-                            <Descriptions.Item label="SEC Filings">
-                                <a href={`${ticker?.secfilings}`}>Link</a>
                             </Descriptions.Item>
                         </Descriptions>
                     </Col>

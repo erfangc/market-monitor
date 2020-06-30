@@ -20,9 +20,10 @@ function App() {
                     </Menu.Item>
                 </Menu>
             </Layout.Header>
-            <Layout.Content style={{ padding: '24px' }}>
+            <Layout.Content style={{padding: '24px'}}>
                 <Route path="/market-overview" component={MarketOverview}/>
-                <Route path="/expected-return" component={ExpectedReturn}/>
+                <Route path="/expected-return" component={ExpectedReturn} exact/>
+                <Route path="/expected-return/:ticker" component={ExpectedReturn}/>
             </Layout.Content>
         </Layout>
     );
