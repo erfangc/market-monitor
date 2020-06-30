@@ -1,41 +1,62 @@
-import React, {ChangeEvent, FocusEvent, useState} from 'react';
-import {Button, Card, DatePicker, Input, InputNumber, Space} from "antd";
+import React, {ChangeEvent, useEffect, useState} from 'react';
+import {AutoComplete, Button, Card, DatePicker, Input, InputNumber, Space} from "antd";
 import {MinusCircleOutlined, PlusOutlined} from '@ant-design/icons';
 import moment from "moment";
+import axios from 'axios';
+import {useHistory} from "react-router";
 
 interface Props {
+    ticker?: string
     onChange: (request: CompanyReturnAnalysisRequest) => void
 }
 
+const now = moment();
+const date = now.format("YYYY-MM-DD");
+
 const initialState: CompanyReturnAnalysisRequest = {
-    date: moment().format("YYYY-MM-DD"),
-    longTermGrowth: 0.03,
+    date,
+    longTermGrowth: 0.0,
     shortTermEpsGrowths: [
         {
-            eps: 27.18,
+            eps: 0.0,
             growthRate: null,
-            date: '2020-12-31'
+            date: now.add(1, 'year').format("YYYY-MM-DD")
         },
         {
-            eps: 30.5,
+            eps: 0.0,
             growthRate: null,
-            date: '2021-12-31'
+            date: now.add(2, 'year').format("YYYY-MM-DD")
         }
     ],
-    ticker: 'BLK',
-    price: 532.66
+    ticker: '',
+    price: 0.0
 };
 
 export function Inputs(props: Props) {
 
-    const [
-        request,
-        setRequest
-    ] = useState<CompanyReturnAnalysisRequest>(initialState);
+    const [request, setRequest] = useState<CompanyReturnAnalysisRequest>(initialState);
+    const [tickerOptions, setTickerOptions] = useState<{ value: string }[]>([]);
+    const history = useHistory();
 
-    const {
-        longTermGrowth, ticker, shortTermEpsGrowths, date, price
-    } = request;
+    /**
+     * Automatically pre-populated
+     * the request fields based on ticker
+     */
+    async function autoPopulateRequest(ticker?: string) {
+        const apiResponse = await axios
+            .get<CompanyReturnAnalysisRequest>(
+                `/api/company-return-analysis/request/${ticker}`
+            );
+        setRequest(apiResponse.data);
+        props.onChange(apiResponse.data);
+    }
+
+    // eslint-disable-next-line
+    useEffect(() => {
+        autoPopulateRequest(props.ticker)
+    }, [props.ticker]);
+
+    const {date, price, longTermGrowth, shortTermEpsGrowths} = request;
 
     function handleDateChange(date?: string) {
         if (!date) {
@@ -48,8 +69,13 @@ export function Inputs(props: Props) {
         setRequest({...request, price: parseFloat(value)})
     }
 
-    function handleTickerChange({currentTarget: {value}}: FocusEvent<HTMLInputElement>) {
-        setRequest({...request, ticker: value});
+    function handleTickerChange(ticker: string) {
+        history.push(`/expected-return/${ticker}`);
+    }
+
+    async function handleTickerSearch(term: string) {
+        const {data} = await axios.get<Ticker[]>('/api/tickers/_match', {params: {term}});
+        setTickerOptions(data.map(({ticker}) => ({value: ticker})));
     }
 
     function removeShortTermEpsGrowth(date: string) {
@@ -119,19 +145,20 @@ export function Inputs(props: Props) {
                 onChange={newValue => handleDateChange(newValue?.format("YYYY-MM-DD"))}
             />
             <br/><br/>
+            <AutoComplete
+                options={tickerOptions}
+                style={{width: 200}}
+                onSelect={handleTickerChange}
+                onSearch={handleTickerSearch}
+                placeholder="Search for a ticker"
+            />
+            <br/><br/>
             <Input
                 placeholder="Enter a price"
                 type="number"
                 value={price!!}
                 addonBefore="Price"
                 onChange={handlePriceChange}
-            />
-            <br/><br/>
-            <Input
-                placeholder="Enter a ticker"
-                value={ticker}
-                addonBefore="Ticker"
-                onChange={handleTickerChange}
             />
             <br/>
             {shortTermEpsGrowths.map(({date, eps}) => (
