@@ -1,9 +1,9 @@
 package com.github.erfangc.marketmonitor.fundamentals
 
-import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.github.erfangc.marketmonitor.fundamentals.models.Fundamental
 import com.github.erfangc.marketmonitor.fundamentals.models.FundamentalRow
 import com.github.erfangc.marketmonitor.io.MongoDB.database
+import com.github.erfangc.marketmonitor.quandl.QuandlService
 import com.mongodb.client.model.Indexes
 import com.vhl.blackmo.grass.dsl.grass
 import org.litote.kmongo.*
@@ -14,7 +14,9 @@ import java.time.LocalDate
 
 @Service
 @ExperimentalStdlibApi
-class FundamentalsService {
+class FundamentalsService(
+        private val quandlService: QuandlService
+) {
 
     companion object {
         val fundamentals = database.getCollection<FundamentalRow>()
@@ -41,9 +43,6 @@ class FundamentalsService {
     }
 
     fun load() {
-        val fileName = "/Users/erfangchen/Downloads/SHARADAR_SF1_0902195e140925ca23756cd43d9f89ae.csv"
-        val fundamentals = fundamentals
-
         fundamentals.drop()
         fundamentals.createIndex(Indexes.ascending(
                 (FundamentalRow::fundamental / Fundamental::reportperiod).name
@@ -51,24 +50,18 @@ class FundamentalsService {
         fundamentals.createIndex(Indexes.compoundIndex(Indexes.hashed(
                 (FundamentalRow::fundamental / Fundamental::ticker).name
         )))
-
-        csvReader()
-                .open(fileName) {
-                    val seq = readAllWithHeaderAsSequence()
-                    grass<Fundamental>()
-                            .harvest(seq)
-                            .chunked(5000)
-                            .forEachIndexed { idx, chunk ->
-                                val rows = chunk.map {
-                                    FundamentalRow(
-                                            _id = "${it.ticker}:${it.dimension}:${it.datekey}:${it.reportperiod}",
-                                            fundamental = it
-                                    )
-                                }
-                                fundamentals.insertMany(rows)
-                                log.info("Loaded batch $idx into MongoDB")
-                            }
-                }
+        quandlService.exportQuandl(publisher = "SHARADAR", table = "SF1") { response ->
+            val fundamentalRows = grass<Fundamental>()
+                    .harvest(response.asList())
+                    .map {
+                        FundamentalRow(
+                                _id = "${it.ticker}:${it.dimension}:${it.datekey}:${it.reportperiod}",
+                                fundamental = it
+                        )
+                    }
+            val result = fundamentals.insertMany(fundamentalRows)
+            log.info("Inserted ${result.insertedIds.size} rows in the ${FundamentalRow::class.simpleName} collection")
+        }
     }
 
     private fun getForDimension(

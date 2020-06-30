@@ -60,7 +60,7 @@ interface Fundamental {
     assetsnc: number | null;
     assetturnover: number | null;
     bvps: number | null;
-    calendardate: string;
+    calendardate: string | null;
     capex: number | null;
     cashneq: number | null;
     cashnequsd: number | null;
@@ -107,7 +107,7 @@ interface Fundamental {
     investments: number | null;
     investmentsc: number | null;
     investmentsnc: number | null;
-    lastupdated: string;
+    lastupdated: string | null;
     liabilities: number | null;
     liabilitiesc: number | null;
     liabilitiesnc: number | null;

@@ -1,7 +1,7 @@
 package com.github.erfangc.marketmonitor.tickers
 
-import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.github.erfangc.marketmonitor.io.MongoDB
+import com.github.erfangc.marketmonitor.quandl.QuandlService
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Indexes
 import com.vhl.blackmo.grass.dsl.grass
@@ -13,8 +13,11 @@ import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 
+@ExperimentalStdlibApi
 @Service
-class TickerService {
+class TickerService(
+        private val quandlService: QuandlService
+) {
 
     private val tickersCollection = MongoDB.database.getCollection<TickerRow>()
     private val log = LoggerFactory.getLogger(TickerService::class.java)
@@ -24,17 +27,12 @@ class TickerService {
         tickersCollection.drop()
         tickersCollection.createIndex(Indexes.hashed((TickerRow::ticker / Ticker::ticker).name))
         tickersCollection.createIndex(Indexes.text((TickerRow::ticker / Ticker::ticker).name))
-        csvReader().open("/Users/erfangchen/Downloads/SHARADAR_TICKERS_6cc728d11002ab9cb99aa8654a6b9f4e.csv") {
-            grass<Ticker>()
-                    .harvest(readAllWithHeaderAsSequence())
-                    .chunked(10000)
-                    .forEachIndexed { idx, chunk ->
-                        val rows = chunk.map {
-                            TickerRow(_id = "${it.table}:${it.permaticker}:${it.ticker}", ticker = it)
-                        }
-                        tickersCollection.insertMany(rows)
-                        log.info("Inserted ${rows.size} from batch $idx into MongoDB")
-                    }
+        quandlService.exportQuandl(publisher = "SHARADAR", table = "TICKERS") { response ->
+            val rows = grass<Ticker>().harvest(response.asList()).map {
+                TickerRow(_id = "${it.table}:${it.permaticker}:${it.ticker}", ticker = it)
+            }
+            tickersCollection.insertMany(rows)
+            log.info("Inserted ${rows.size} rows into the ${Ticker::class.simpleName} collection")
         }
     }
 

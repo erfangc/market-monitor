@@ -13,13 +13,13 @@ data class Fundamental(
         // Dimension
         val dimension: String,
         // Calendar Date
-        val calendardate: LocalDate,
+        val calendardate: LocalDate? = null,
         // Date Key
         val datekey: LocalDate,
         // Report Period
         val reportperiod: LocalDate,
         // Last Updated Date
-        val lastupdated: LocalDate,
+        val lastupdated: LocalDate? = null,
         // Accumulated Other Comprehensive Income
         val accoci: Double? = null,
         // Total Assets

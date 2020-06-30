@@ -2,6 +2,7 @@ package com.github.erfangc.marketmonitor.tickers
 
 import org.springframework.web.bind.annotation.*
 
+@ExperimentalStdlibApi
 @RestController
 @RequestMapping("tickers")
 class TickerController(private val tickersService: TickerService) {
