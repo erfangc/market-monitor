@@ -28,35 +28,40 @@ class CompanyReturnAnalysisService(
 
     fun getCompanyReturnAnalysisRequest(ticker: String): CompanyReturnAnalysisRequest {
         val rows = yFinanceService.getEarningsEstimate(ticker)
+        val row = rows.find { it["Earnings Estimate"] == "Avg. Estimate" } ?: emptyMap()
 
-        val forYear = { date: LocalDate ->
-            val adjective = if (date.year == LocalDate.now().year) "Current" else "Next"
-            "$adjective Year (${date.year})"
+        val now = LocalDate.now()
+        val shortTermEpsGrowths = try {
+            tryParsingEpsForCurrentFY(currentFy = now, row = row)
+        } catch (e: IllegalArgumentException) {
+            tryParsingEpsForCurrentFY(currentFy = now.plusYears(1), row = row)
         }
-
-        val row = rows
-                .find { it["Earnings Estimate"] == "Avg. Estimate" } ?: emptyMap()
-
-        val currentYear = LocalDate.now()
-        val nextYear = currentYear.plusYears(1)
-        val shortTermEpsGrowths = listOf(currentYear, nextYear).map {
-            ShortTermEpsGrowth(
-                    date = it,
-                    eps = row[forYear(it)]?.toDoubleOrNull()
-            )
-        }
-
-        val date = LocalDate.now()
-        val price = alphaVantageService.getPrice(ticker)
 
         return CompanyReturnAnalysisRequest(
                 ticker = ticker,
-                date = date,
+                date = now,
                 longTermGrowth = 0.03,
                 shortTermEpsGrowths = shortTermEpsGrowths,
-                price = price
+                price = alphaVantageService.getPrice(ticker)
         )
 
+    }
+
+    private fun tryParsingEpsForCurrentFY(
+            currentFy: LocalDate,
+            row: Map<String, String>
+    ): List<ShortTermEpsGrowth> {
+        val forYear = { date: LocalDate ->
+            val adjective = if (date.year == currentFy.year) "Current" else "Next"
+            "$adjective Year (${date.year})"
+        }
+        val nextYear = currentFy.plusYears(1)
+        return listOf(currentFy, nextYear).map {
+            ShortTermEpsGrowth(
+                    date = it,
+                    eps = row[forYear(it)]?.toDouble() ?: throw IllegalArgumentException()
+            )
+        }
     }
 
     /**

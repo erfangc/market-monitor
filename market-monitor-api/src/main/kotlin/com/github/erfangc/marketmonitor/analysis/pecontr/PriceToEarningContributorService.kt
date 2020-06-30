@@ -3,7 +3,7 @@ package com.github.erfangc.marketmonitor.analysis.pecontr
 import com.github.erfangc.marketmonitor.dailymetrics.DailyMetricsService.Companion.dailyMetrics
 import com.github.erfangc.marketmonitor.dailymetrics.models.DailyMetric
 import com.github.erfangc.marketmonitor.dailymetrics.models.DailyMetricRow
-import com.github.erfangc.marketmonitor.mostRecentWorkingDay
+import com.github.erfangc.marketmonitor.previousWorkingDay
 import com.github.erfangc.marketmonitor.tickers.TickerService
 import org.litote.kmongo.div
 import org.litote.kmongo.eq
@@ -27,7 +27,7 @@ class PriceToEarningContributorService(
             industry: String? = null
     ): List<PriceToEarningContributor> {
 
-        val date = date ?: LocalDate.now().mostRecentWorkingDay()
+        val date = date ?: LocalDate.now().previousWorkingDay()
 
         val rows = dailyMetrics
                 .find(DailyMetricRow::dailyMetric / DailyMetric::date eq date)

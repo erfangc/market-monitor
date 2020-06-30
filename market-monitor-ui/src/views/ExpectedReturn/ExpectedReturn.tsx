@@ -1,9 +1,11 @@
 import React, {useState} from 'react';
-import {Card, Col, Descriptions, Row, Space, Statistic} from "antd";
+import {Card, Col, Row} from "antd";
 import {Inputs} from "./Inputs";
 import axios from 'axios';
 import {CompanyValueAttribution} from "./CompanyValueAttribution";
 import {useParams} from "react-router";
+import {TickerDescription} from "./TickerDescription";
+import {CompanyReturnAnalysisSummary} from "./CompanyReturnAnalysisSummary";
 
 export function ExpectedReturn() {
 
@@ -31,57 +33,28 @@ export function ExpectedReturn() {
             <Col span={8}>
                 <Row gutter={[16, 16]}>
                     <Col span={24}>
-                        <Inputs ticker={symbol} onChange={runCompanyAnalysis}/>
+                        <Inputs
+                            ticker={symbol}
+                            onChange={runCompanyAnalysis}
+                        />
                     </Col>
                     <Col span={24}>
-                        <Descriptions bordered>
-                            <Descriptions.Item label="Name" span={3}>
-                                {ticker?.name ?? '-'}
-                            </Descriptions.Item>
-                            <Descriptions.Item label="Category" span={2}>
-                                {ticker?.category ?? '-'}
-                            </Descriptions.Item>
-                            <Descriptions.Item label="SEC Filings" span={1}>
-                                <a href={`${ticker?.secfilings}`}>Link to SEC</a>
-                            </Descriptions.Item>
-                            <Descriptions.Item label="Sector" span={2}>
-                                {ticker?.sector ?? '-'}
-                            </Descriptions.Item>
-                            <Descriptions.Item label="Industry" span={2}>
-                                {ticker?.industry ?? '-'}
-                            </Descriptions.Item>
-                            <Descriptions.Item label="FAMA Industry" span={2}>
-                                {ticker?.famaindustry ?? '-'}
-                            </Descriptions.Item>
-                            <Descriptions.Item label="FAMA Sector" span={2}>
-                                {ticker?.sector ?? '-'}
-                            </Descriptions.Item>
-                        </Descriptions>
+                        <TickerDescription ticker={ticker}/>
                     </Col>
                 </Row>
             </Col>
             <Col span={16}>
                 <Row gutter={[16, 16]}>
                     <Col span={24}>
-                        <Card>
-                            <Col span={24}>
-                                <Space>
-                                    <Statistic
-                                        title="Expected Return"
-                                        value={((companyReturnAnalysis?.expectedReturn ?? 0) * 100).toFixed(1)}
-                                        suffix="%"
-                                    />
-                                    <Statistic
-                                        title="Price to Earning"
-                                        value={companyReturnAnalysis?.priceToEarning.toFixed(1)}
-                                    />
-                                </Space>
-                            </Col>
-                        </Card>
+                        <CompanyReturnAnalysisSummary
+                            companyReturnAnalysis={companyReturnAnalysis}
+                        />
                     </Col>
                     <Col span={24}>
                         <Card title="Company Return Analysis">
-                            <CompanyValueAttribution companyReturnAnalysis={companyReturnAnalysis}/>
+                            <CompanyValueAttribution
+                                companyReturnAnalysis={companyReturnAnalysis}
+                            />
                         </Card>
                     </Col>
                 </Row>

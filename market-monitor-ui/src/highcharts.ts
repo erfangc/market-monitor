@@ -74,11 +74,14 @@ Highcharts.theme = {
         }
     },
     tooltip: {
+        useHTML: true,
         borderWidth: 0,
         backgroundColor: 'rgba(0,0,0,0.85)',
+        headerFormat: '<b style="line-height: 1.5rem;">{point.key}</b></br>',
         style: {
             color: '#F0F0F0'
-        }
+        },
+        valueDecimals: 1
     },
     plotOptions: {
         series: {
