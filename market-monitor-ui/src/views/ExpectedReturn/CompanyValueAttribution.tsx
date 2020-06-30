@@ -1,5 +1,5 @@
 import React from 'react';
-import {Col, Row} from "antd";
+import {Card, Col, Row} from "antd";
 import HighchartsReact from "highcharts-react-official";
 import {colors, highcharts} from "../../highcharts";
 import {numberFormat} from "highcharts";
@@ -16,8 +16,9 @@ export function CompanyValueAttribution(
     const commonOptions: Highcharts.Options = {
         yAxis: {
             title: {
-                text: 'Contribution'
-            }
+                text: null
+            },
+            gridLineWidth: 0
         },
         xAxis: {
             type: "category"
@@ -25,8 +26,13 @@ export function CompanyValueAttribution(
         legend: {
             enabled: false
         },
+        tooltip: {
+            enabled: false
+        },
         plotOptions: {
             waterfall: {
+                lineWidth: 2,
+                lineColor: '#ebebeb',
                 dataLabels: {
                     useHTML: true,
                     enabled: true,
@@ -112,13 +118,15 @@ export function CompanyValueAttribution(
     };
 
     return (
-        <Row gutter={[16, 16]}>
-            <Col span={12}>
-                <HighchartsReact highcharts={highcharts} options={shortLongTerm}/>
-            </Col>
-            <Col span={12}>
-                <HighchartsReact highcharts={highcharts} options={valueVsGrowth}/>
-            </Col>
-        </Row>
+        <Card title="Company Value Analysis">
+            <Row gutter={[16, 16]}>
+                <Col span={12}>
+                    <HighchartsReact highcharts={highcharts} options={shortLongTerm}/>
+                </Col>
+                <Col span={12}>
+                    <HighchartsReact highcharts={highcharts} options={valueVsGrowth}/>
+                </Col>
+            </Row>
+        </Card>
     );
 }

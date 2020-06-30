@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Card, Col, Row} from "antd";
+import {Col, Row} from "antd";
 import {Inputs} from "./Inputs";
 import axios from 'axios';
 import {CompanyValueAttribution} from "./CompanyValueAttribution";
@@ -21,7 +21,7 @@ export function ExpectedReturn() {
         setTicker
     ] = useState<Ticker | undefined>(undefined);
 
-    async function runCompanyAnalysis(request: CompanyReturnAnalysisRequest) {
+    async function runCompanyReturnAnalysis(request: CompanyReturnAnalysisRequest) {
         const companyReturnAnalysisApiResponse = await axios.post<CompanyReturnAnalysis>('/api/company-return-analysis', request);
         const tickersApiResponse = await axios.get<Ticker>(`/api/tickers/${request.ticker}`);
         setCompanyReturnAnalysis(companyReturnAnalysisApiResponse.data);
@@ -35,7 +35,7 @@ export function ExpectedReturn() {
                     <Col span={24}>
                         <Inputs
                             ticker={symbol}
-                            onChange={runCompanyAnalysis}
+                            onChange={runCompanyReturnAnalysis}
                         />
                     </Col>
                     <Col span={24}>
@@ -51,11 +51,9 @@ export function ExpectedReturn() {
                         />
                     </Col>
                     <Col span={24}>
-                        <Card title="Company Return Analysis">
-                            <CompanyValueAttribution
-                                companyReturnAnalysis={companyReturnAnalysis}
-                            />
-                        </Card>
+                        <CompanyValueAttribution
+                            companyReturnAnalysis={companyReturnAnalysis}
+                        />
                     </Col>
                 </Row>
             </Col>
