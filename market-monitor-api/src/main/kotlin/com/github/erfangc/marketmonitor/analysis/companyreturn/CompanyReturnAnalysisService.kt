@@ -174,7 +174,9 @@ class CompanyReturnAnalysisService(
         } while (iter < maxIter && abs(epislon) > tolerance)
 
         if (iter == maxIter && abs(epislon) > tolerance) {
-            log.error("Goal seek algorithm did not converge within $iter iterations, epislon=$epislon")
+            val message = "Goal seek algorithm did not converge within $iter iterations, epislon=$epislon"
+            log.error(message)
+            error(message)
         }
 
         return mid

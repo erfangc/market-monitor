@@ -21,55 +21,55 @@ data class Fundamental(
         // Last Updated Date
         val lastupdated: LocalDate,
         // Accumulated Other Comprehensive Income
-        val accoci: String? = null,
+        val accoci: Double? = null,
         // Total Assets
-        val assets: String? = null,
+        val assets: Double? = null,
         // Average Assets
-        val assetsavg: String? = null,
+        val assetsavg: Double? = null,
         // Current Assets
-        val assetsc: String? = null,
+        val assetsc: Double? = null,
         // Assets Non-Current
-        val assetsnc: String? = null,
+        val assetsnc: Double? = null,
         // Asset Turnover
         val assetturnover: Double? = null,
         // Book Value per Share
         val bvps: Double? = null,
         // Capital Expenditure
-        val capex: String? = null,
+        val capex: Double? = null,
         // Cash and Equivalents
-        val cashneq: String? = null,
+        val cashneq: Double? = null,
         // Cash and Equivalents (USD)
         val cashnequsd: Double? = null,
         // Cost of Revenue
-        val cor: String? = null,
+        val cor: Double? = null,
         // Consolidated Income
-        val consolinc: String? = null,
+        val consolinc: Double? = null,
         // Current Ratio
         val currentratio: Double? = null,
         // Debt to Equity Ratio
         val de: Double? = null,
         // Total Debt
-        val debt: String? = null,
+        val debt: Double? = null,
         // Debt Current
-        val debtc: String? = null,
+        val debtc: Double? = null,
         // Debt Non-Current
-        val debtnc: String? = null,
+        val debtnc: Double? = null,
         // Total Debt (USD)
         val debtusd: Double? = null,
         // Deferred Revenue
-        val deferredrev: String? = null,
+        val deferredrev: Double? = null,
         // Depreciation Amortization & Accretion
-        val depamor: String? = null,
+        val depamor: Double? = null,
         // Deposit Liabilities
-        val deposits: String? = null,
+        val deposits: Double? = null,
         // Dividend Yield
         val divyield: Double? = null,
         // Dividends per Basic Common Share
         val dps: Double? = null,
         // Earning Before Interest & Taxes (EBIT)
-        val ebit: String? = null,
+        val ebit: Double? = null,
         // Earnings Before Interest Taxes & Depreciation Amortization (EBITDA)
-        val ebitda: String? = null,
+        val ebitda: Double? = null,
         // EBITDA Margin
         val ebitdamargin: Double? = null,
         // Earnings Before Interest Taxes & Depreciation Amortization (USD)
@@ -77,7 +77,7 @@ data class Fundamental(
         // Earning Before Interest & Taxes (USD)
         val ebitusd: Double? = null,
         // Earnings before Tax
-        val ebt: String? = null,
+        val ebt: Double? = null,
         // Earnings per Basic Share
         val eps: Double? = null,
         // Earnings per Diluted Share
@@ -85,9 +85,9 @@ data class Fundamental(
         // Earnings per Basic Share (USD)
         val epsusd: Double? = null,
         // Shareholders Equity
-        val equity: String? = null,
+        val equity: Double? = null,
         // Average Equity
-        val equityavg: String? = null,
+        val equityavg: Double? = null,
         // Shareholders Equity (USD)
         val equityusd: Double? = null,
         // Enterprise Value
@@ -97,77 +97,77 @@ data class Fundamental(
         // Enterprise Value over EBITDA
         val evebitda: Double? = null,
         // Free Cash Flow
-        val fcf: String? = null,
+        val fcf: Double? = null,
         // Free Cash Flow per Share
         val fcfps: Double? = null,
         // Foreign Currency to USD Exchange Rate
         val fxusd: Double? = null,
         // Gross Profit
-        val gp: String? = null,
+        val gp: Double? = null,
         // Gross Margin
         val grossmargin: Double? = null,
         // Goodwill and Intangible Assets
-        val intangibles: String? = null,
+        val intangibles: Double? = null,
         // Interest Expense
-        val intexp: String? = null,
+        val intexp: Double? = null,
         // Invested Capital
-        val invcap: String? = null,
+        val invcap: Double? = null,
         // Invested Capital Average
-        val invcapavg: String? = null,
+        val invcapavg: Double? = null,
         // Inventory
-        val inventory: String? = null,
+        val inventory: Double? = null,
         // Investments
-        val investments: String? = null,
+        val investments: Double? = null,
         // Investments Current
-        val investmentsc: String? = null,
+        val investmentsc: Double? = null,
         // Investments Non-Current
-        val investmentsnc: String? = null,
+        val investmentsnc: Double? = null,
         // Total Liabilities
-        val liabilities: String? = null,
+        val liabilities: Double? = null,
         // Current Liabilities
-        val liabilitiesc: String? = null,
+        val liabilitiesc: Double? = null,
         // Liabilities Non-Current
-        val liabilitiesnc: String? = null,
+        val liabilitiesnc: Double? = null,
         // Market Capitalization
         val marketcap: Double? = null,
         // Net Cash Flow / Change in Cash & Cash Equivalents
-        val ncf: String? = null,
+        val ncf: Double? = null,
         // Net Cash Flow - Business Acquisitions and Disposals
-        val ncfbus: String? = null,
+        val ncfbus: Double? = null,
         // Issuance (Purchase) of Equity Shares
-        val ncfcommon: String? = null,
+        val ncfcommon: Double? = null,
         // Issuance (Repayment) of Debt Securities
-        val ncfdebt: String? = null,
+        val ncfdebt: Double? = null,
         // Payment of Dividends & Other Cash Distributions
-        val ncfdiv: String? = null,
+        val ncfdiv: Double? = null,
         // Net Cash Flow from Financing
-        val ncff: String? = null,
+        val ncff: Double? = null,
         // Net Cash Flow from Investing
-        val ncfi: String? = null,
+        val ncfi: Double? = null,
         // Net Cash Flow - Investment Acquisitions and Disposals
-        val ncfinv: String? = null,
+        val ncfinv: Double? = null,
         // Net Cash Flow from Operations
-        val ncfo: String? = null,
+        val ncfo: Double? = null,
         // Effect of Exchange Rate Changes on Cash
-        val ncfx: String? = null,
+        val ncfx: Double? = null,
         // Net Income
-        val netinc: String? = null,
+        val netinc: Double? = null,
         // Net Income Common Stock
-        val netinccmn: String? = null,
+        val netinccmn: Double? = null,
         // Net Income Common Stock (USD)
         val netinccmnusd: Double? = null,
         // Net Loss Income from Discontinued Operations
-        val netincdis: String? = null,
+        val netincdis: Double? = null,
         // Net Income to Non-Controlling Interests
-        val netincnci: String? = null,
+        val netincnci: Double? = null,
         // Profit Margin
         val netmargin: Double? = null,
         // Operating Expenses
-        val opex: String? = null,
+        val opex: Double? = null,
         // Operating Income
-        val opinc: String? = null,
+        val opinc: Double? = null,
         // Trade and Non-Trade Payables
-        val payables: String? = null,
+        val payables: Double? = null,
         // Payout Ratio
         val payoutratio: Double? = null,
         // Price to Book Value
@@ -177,9 +177,9 @@ data class Fundamental(
         // Price to Earnings Ratio
         val pe1: Double? = null,
         // Property Plant & Equipment Net
-        val ppnenet: String? = null,
+        val ppnenet: Double? = null,
         // Preferred Dividends Income Statement Impact
-        val prefdivis: String? = null,
+        val prefdivis: Double? = null,
         // Share Price (Adjusted Close)
         val price: Double? = null,
         // Price Sales (Damodaran Method)
@@ -187,15 +187,15 @@ data class Fundamental(
         // Price to Sales Ratio
         val ps1: Double? = null,
         // Trade and Non-Trade Receivables
-        val receivables: String? = null,
+        val receivables: Double? = null,
         // Accumulated Retained Earnings (Deficit)
-        val retearn: String? = null,
+        val retearn: Double? = null,
         // Revenues
         val revenue: Double? = null,
         // Revenues (USD)
         val revenueusd: Double? = null,
         // Research and Development Expense
-        val rnd: String? = null,
+        val rnd: Double? = null,
         // Return on Average Assets
         val roa: Double? = null,
         // Return on Average Equity
@@ -205,9 +205,9 @@ data class Fundamental(
         // Return on Sales
         val ros: Double? = null,
         // Share Based Compensation
-        val sbcomp: String? = null,
+        val sbcomp: Double? = null,
         // Selling General and Administrative Expense
-        val sgna: String? = null,
+        val sgna: Double? = null,
         // Share Factor
         val sharefactor: Double? = null,
         // Shares (Basic)
@@ -219,15 +219,15 @@ data class Fundamental(
         // Sales per Share
         val sps: Double? = null,
         // Tangible Asset Value
-        val tangibles: String? = null,
+        val tangibles: Double? = null,
         // Tax Assets
-        val taxassets: String? = null,
+        val taxassets: Double? = null,
         // Income Tax Expense
-        val taxexp: String? = null,
+        val taxexp: Double? = null,
         // Tax Liabilities
-        val taxliabilities: String? = null,
+        val taxliabilities: Double? = null,
         // Tangible Assets Book Value per Share
         val tbvps: Double? = null,
         // Working Capital
-        val workingcapital: String? = null
+        val workingcapital: Double? = null
 )

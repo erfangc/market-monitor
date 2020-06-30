@@ -21,6 +21,24 @@ interface MarketSummary {
     totalMarketCap: number;
 }
 
+interface TemporalAccessor {
+}
+
+interface Temporal extends TemporalAccessor {
+}
+
+interface TemporalAdjuster {
+}
+
+interface Instant extends Temporal, TemporalAdjuster {
+}
+
+interface ApiError {
+    message: string;
+    status: number;
+    timestamp: Instant;
+}
+
 interface DailyMetric {
     date: string;
     ev: number | null;
@@ -35,117 +53,117 @@ interface DailyMetric {
 }
 
 interface Fundamental {
-    accoci: string | null;
-    assets: string | null;
-    assetsavg: string | null;
-    assetsc: string | null;
-    assetsnc: string | null;
+    accoci: number | null;
+    assets: number | null;
+    assetsavg: number | null;
+    assetsc: number | null;
+    assetsnc: number | null;
     assetturnover: number | null;
     bvps: number | null;
     calendardate: string;
-    capex: string | null;
-    cashneq: string | null;
+    capex: number | null;
+    cashneq: number | null;
     cashnequsd: number | null;
-    consolinc: string | null;
-    cor: string | null;
+    consolinc: number | null;
+    cor: number | null;
     currentratio: number | null;
     datekey: string;
     de: number | null;
-    debt: string | null;
-    debtc: string | null;
-    debtnc: string | null;
+    debt: number | null;
+    debtc: number | null;
+    debtnc: number | null;
     debtusd: number | null;
-    deferredrev: string | null;
-    depamor: string | null;
-    deposits: string | null;
+    deferredrev: number | null;
+    depamor: number | null;
+    deposits: number | null;
     dimension: string;
     divyield: number | null;
     dps: number | null;
-    ebit: string | null;
-    ebitda: string | null;
+    ebit: number | null;
+    ebitda: number | null;
     ebitdamargin: number | null;
     ebitdausd: number | null;
     ebitusd: number | null;
-    ebt: string | null;
+    ebt: number | null;
     eps: number | null;
     epsdil: number | null;
     epsusd: number | null;
-    equity: string | null;
-    equityavg: string | null;
+    equity: number | null;
+    equityavg: number | null;
     equityusd: number | null;
     ev: number | null;
     evebit: number | null;
     evebitda: number | null;
-    fcf: string | null;
+    fcf: number | null;
     fcfps: number | null;
     fxusd: number | null;
-    gp: string | null;
+    gp: number | null;
     grossmargin: number | null;
-    intangibles: string | null;
-    intexp: string | null;
-    invcap: string | null;
-    invcapavg: string | null;
-    inventory: string | null;
-    investments: string | null;
-    investmentsc: string | null;
-    investmentsnc: string | null;
+    intangibles: number | null;
+    intexp: number | null;
+    invcap: number | null;
+    invcapavg: number | null;
+    inventory: number | null;
+    investments: number | null;
+    investmentsc: number | null;
+    investmentsnc: number | null;
     lastupdated: string;
-    liabilities: string | null;
-    liabilitiesc: string | null;
-    liabilitiesnc: string | null;
+    liabilities: number | null;
+    liabilitiesc: number | null;
+    liabilitiesnc: number | null;
     marketcap: number | null;
-    ncf: string | null;
-    ncfbus: string | null;
-    ncfcommon: string | null;
-    ncfdebt: string | null;
-    ncfdiv: string | null;
-    ncff: string | null;
-    ncfi: string | null;
-    ncfinv: string | null;
-    ncfo: string | null;
-    ncfx: string | null;
-    netinc: string | null;
-    netinccmn: string | null;
+    ncf: number | null;
+    ncfbus: number | null;
+    ncfcommon: number | null;
+    ncfdebt: number | null;
+    ncfdiv: number | null;
+    ncff: number | null;
+    ncfi: number | null;
+    ncfinv: number | null;
+    ncfo: number | null;
+    ncfx: number | null;
+    netinc: number | null;
+    netinccmn: number | null;
     netinccmnusd: number | null;
-    netincdis: string | null;
-    netincnci: string | null;
+    netincdis: number | null;
+    netincnci: number | null;
     netmargin: number | null;
-    opex: string | null;
-    opinc: string | null;
-    payables: string | null;
+    opex: number | null;
+    opinc: number | null;
+    payables: number | null;
     payoutratio: number | null;
     pb: number | null;
     pe: number | null;
     pe1: number | null;
-    ppnenet: string | null;
-    prefdivis: string | null;
+    ppnenet: number | null;
+    prefdivis: number | null;
     price: number | null;
     ps: number | null;
     ps1: number | null;
-    receivables: string | null;
+    receivables: number | null;
     reportperiod: string;
-    retearn: string | null;
+    retearn: number | null;
     revenue: number | null;
     revenueusd: number | null;
-    rnd: string | null;
+    rnd: number | null;
     roa: number | null;
     roe: number | null;
     roic: number | null;
     ros: number | null;
-    sbcomp: string | null;
-    sgna: string | null;
+    sbcomp: number | null;
+    sgna: number | null;
     sharefactor: number | null;
     sharesbas: number | null;
     shareswa: number | null;
     shareswadil: number | null;
     sps: number | null;
-    tangibles: string | null;
-    taxassets: string | null;
-    taxexp: string | null;
-    taxliabilities: string | null;
+    tangibles: number | null;
+    taxassets: number | null;
+    taxexp: number | null;
+    taxliabilities: number | null;
     tbvps: number | null;
     ticker: string;
-    workingcapital: string | null;
+    workingcapital: number | null;
 }
 
 interface PriceToEarningContributor {

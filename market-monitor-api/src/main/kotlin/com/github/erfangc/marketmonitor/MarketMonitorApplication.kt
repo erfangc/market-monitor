@@ -42,14 +42,15 @@ fun main(args: Array<String>) {
 private fun typescriptDefinitionText(): String {
 	return TypeScriptGenerator(
 			rootClasses = setOf(
-					MarketSummary::class,
-					DailyMetric::class,
-					Fundamental::class,
-					PriceToEarningContributor::class,
-					CompanyReturnAnalysis::class,
-					CompanyReturnAnalysisRequest::class,
-					Ticker::class
-			),
+                    MarketSummary::class,
+                    ApiError::class,
+                    DailyMetric::class,
+                    Fundamental::class,
+                    PriceToEarningContributor::class,
+                    CompanyReturnAnalysis::class,
+                    CompanyReturnAnalysisRequest::class,
+                    Ticker::class
+            ),
 			mappings = mapOf(
                     LocalDate::class to "string"
             )

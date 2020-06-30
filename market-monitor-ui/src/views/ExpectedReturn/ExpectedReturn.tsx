@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
-import {Col, Row} from "antd";
+import {Col, notification, Row} from "antd";
 import {Inputs} from "./Inputs";
-import axios from 'axios';
+import axios, {AxiosError} from 'axios';
 import {CompanyValueAttribution} from "./CompanyValueAttribution";
 import {useParams} from "react-router";
 import {TickerDescription} from "./TickerDescription";
 import {CompanyReturnAnalysisSummary} from "./CompanyReturnAnalysisSummary";
+import {FundamentalsOvertime} from "./FundamentalsOvertime";
 
 export function ExpectedReturn() {
 
@@ -17,15 +18,27 @@ export function ExpectedReturn() {
     ] = useState<CompanyReturnAnalysis | undefined>(undefined);
 
     const [
+        fundamentals,
+        setFundamentals
+    ] = useState<Fundamental[]>([]);
+
+    const [
         ticker,
         setTicker
     ] = useState<Ticker | undefined>(undefined);
 
     async function runCompanyReturnAnalysis(request: CompanyReturnAnalysisRequest) {
-        const companyReturnAnalysisApiResponse = await axios.post<CompanyReturnAnalysis>('/api/company-return-analysis', request);
-        const tickersApiResponse = await axios.get<Ticker>(`/api/tickers/${request.ticker}`);
-        setCompanyReturnAnalysis(companyReturnAnalysisApiResponse.data);
-        setTicker(tickersApiResponse.data);
+        try {
+            const companyReturnAnalysisApiResponse = await axios.post<CompanyReturnAnalysis>('/api/company-return-analysis', request);
+            const tickersApiResponse = await axios.get<Ticker>(`/api/tickers/${request.ticker}`);
+            const fundamentalsApiResponse = await axios.get<Fundamental[]>(`/api/fundamentals/${request.ticker}/MRT`);
+            setCompanyReturnAnalysis(companyReturnAnalysisApiResponse.data);
+            setTicker(tickersApiResponse.data);
+            setFundamentals(fundamentalsApiResponse.data);
+        } catch (e) {
+            const {response} = e as AxiosError<ApiError>;
+            notification.error({message: 'Server Error', description: response?.data?.message});
+        }
     }
 
     return (
@@ -54,6 +67,9 @@ export function ExpectedReturn() {
                         <CompanyValueAttribution
                             companyReturnAnalysis={companyReturnAnalysis}
                         />
+                    </Col>
+                    <Col span={24}>
+                        <FundamentalsOvertime fundamentals={fundamentals}/>
                     </Col>
                 </Row>
             </Col>

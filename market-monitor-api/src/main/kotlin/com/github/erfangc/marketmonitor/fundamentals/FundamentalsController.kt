@@ -9,12 +9,29 @@ import java.time.LocalDate
 @ExperimentalStdlibApi
 @RequestMapping("fundamentals")
 class FundamentalsController(private val fundamentalsService: FundamentalsService) {
-    @GetMapping("{ticker}")
-    fun getMrq(
+
+    @GetMapping("{ticker}/MRQ")
+    fun getMRQ(
             @PathVariable ticker: String,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) notAfter: LocalDate? = null
     ): List<Fundamental> {
         return fundamentalsService.getMRQ(ticker, notAfter)
+    }
+
+    @GetMapping("{ticker}/MRT")
+    fun getMRT(
+            @PathVariable ticker: String,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) notAfter: LocalDate? = null
+    ): List<Fundamental> {
+        return fundamentalsService.getMRT(ticker, notAfter)
+    }
+
+    @GetMapping("{ticker}/MRY")
+    fun getMRY(
+            @PathVariable ticker: String,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) notAfter: LocalDate? = null
+    ): List<Fundamental> {
+        return fundamentalsService.getMRY(ticker, notAfter)
     }
 
     @PostMapping
