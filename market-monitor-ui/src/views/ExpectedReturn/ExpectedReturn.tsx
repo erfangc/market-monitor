@@ -4,13 +4,13 @@ import {Inputs} from "./Inputs";
 import axios, {AxiosError} from 'axios';
 import {CompanyValueAttribution} from "./CompanyValueAttribution";
 import {useParams} from "react-router";
-import {TickerDescription} from "./TickerDescription";
+import {CompanyDescription} from "./CompanyDescription";
 import {CompanyReturnAnalysisSummary} from "./CompanyReturnAnalysisSummary";
 import {FundamentalsOvertime} from "./FundamentalsOvertime";
 
 export function ExpectedReturn() {
 
-    const {ticker: symbol} = useParams<{ ticker?: string }>();
+    const {ticker} = useParams<{ ticker?: string }>();
 
     const [
         companyReturnAnalysis,
@@ -22,18 +22,11 @@ export function ExpectedReturn() {
         setFundamentals
     ] = useState<Fundamental[]>([]);
 
-    const [
-        ticker,
-        setTicker
-    ] = useState<Ticker | undefined>(undefined);
-
     async function runCompanyReturnAnalysis(request: CompanyReturnAnalysisRequest) {
         try {
             const companyReturnAnalysisApiResponse = await axios.post<CompanyReturnAnalysis>('/api/company-return-analysis', request);
-            const tickersApiResponse = await axios.get<Ticker>(`/api/tickers/${request.ticker}`);
             const fundamentalsApiResponse = await axios.get<Fundamental[]>(`/api/fundamentals/${request.ticker}/MRT`);
             setCompanyReturnAnalysis(companyReturnAnalysisApiResponse.data);
-            setTicker(tickersApiResponse.data);
             setFundamentals(fundamentalsApiResponse.data);
         } catch (e) {
             const {response} = e as AxiosError<ApiError>;
@@ -47,12 +40,14 @@ export function ExpectedReturn() {
                 <Row gutter={[16, 16]}>
                     <Col span={24}>
                         <Inputs
-                            ticker={symbol}
+                            ticker={ticker}
                             onChange={runCompanyReturnAnalysis}
                         />
                     </Col>
                     <Col span={24}>
-                        <TickerDescription ticker={ticker}/>
+                        <CompanyDescription
+                            companyReturnAnalysis={companyReturnAnalysis}
+                        />
                     </Col>
                 </Row>
             </Col>

@@ -29,6 +29,13 @@ class DailyMetricsService {
         val dailyMetrics = database.getCollection<DailyMetricRow>()
     }
 
+    fun getDailyMetrics(date: LocalDate): List<DailyMetric> {
+        return dailyMetrics
+                .find(DailyMetricRow::dailyMetric / DailyMetric::date eq date)
+                .map { it.dailyMetric }
+                .toList()
+    }
+
     fun getDailyMetric(ticker: String, date: LocalDate): DailyMetric? {
         return dailyMetrics.findOne(
                 DailyMetricRow::dailyMetric / DailyMetric::ticker eq ticker,
@@ -47,10 +54,11 @@ class DailyMetricsService {
         loadForDate(LocalDate.now())
     }
 
-    fun loadForPeriod(startDate: LocalDate? = null, endDate: LocalDate = LocalDate.now()) {
-        val st = startDate?:endDate.minusYears(1)
-        st.datesUntil(endDate.plusDays(1)).forEach {
-            date -> loadForDate(date)
+    fun loadForPeriod(startDate: LocalDate? = null, endDate: LocalDate? = null) {
+        val endDate = endDate ?: LocalDate.now()
+        val st = startDate ?: endDate.minusYears(1)
+        st.datesUntil(endDate.plusDays(1)).forEach { date ->
+            loadForDate(date)
         }
     }
 

@@ -4,6 +4,7 @@ import com.github.erfangc.marketmonitor.alphavantage.AlphaVantageService
 import com.github.erfangc.marketmonitor.analysis.companyreturn.models.*
 import com.github.erfangc.marketmonitor.fundamentals.FundamentalsService
 import com.github.erfangc.marketmonitor.mostRecentWorkingDay
+import com.github.erfangc.marketmonitor.tickers.TickerService
 import com.github.erfangc.marketmonitor.yfinance.YFinanceService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -16,6 +17,7 @@ import kotlin.math.pow
 @ExperimentalStdlibApi
 class CompanyReturnAnalysisService(
         private val fundamentalsService: FundamentalsService,
+        private val tickerService: TickerService,
         private val yFinanceService: YFinanceService,
         private val alphaVantageService: AlphaVantageService
 ) {
@@ -107,14 +109,18 @@ class CompanyReturnAnalysisService(
                 )
         )
 
+        val meta = tickerService.getTicker(ticker) ?: error("Unable to find information for $ticker")
+
         return CompanyReturnAnalysis(
+                _id = "$ticker:$date",
+                meta = meta,
                 date = date,
                 ticker = request.ticker,
                 eps = eps,
                 bvps = bvps,
                 priceToEarning = price / eps,
                 shortTermEpsGrowths = shortTermEpsGrowth,
-                expectedReturn = discountRate,
+                discountRate = discountRate,
                 longTermGrowth = longTermGrowth,
                 pricingFunctionOutputs = pricingFunctionOutputs
         )

@@ -1,18 +1,22 @@
 package com.github.erfangc.marketmonitor.analysis.marketsummary
 
-import com.github.erfangc.marketmonitor.dailymetrics.DailyMetricsService.Companion.dailyMetrics
+import com.github.erfangc.marketmonitor.dailymetrics.DailyMetricsService
 import com.github.erfangc.marketmonitor.dailymetrics.models.DailyMetric
-import com.github.erfangc.marketmonitor.dailymetrics.models.DailyMetricRow
 import com.github.erfangc.marketmonitor.io.MongoDB.database
 import com.github.erfangc.marketmonitor.tickers.TickerService
-import org.litote.kmongo.*
+import org.litote.kmongo.findOneById
+import org.litote.kmongo.getCollection
+import org.litote.kmongo.save
 import org.nield.kotlinstatistics.median
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 
 @ExperimentalStdlibApi
 @Service
-class MarketSummaryService(private val tickerService: TickerService) {
+class MarketSummaryService(
+        private val tickerService: TickerService,
+        private val dailyMetricsService: DailyMetricsService
+) {
 
     companion object {
         val marketSumaries = database.getCollection<MarketSummary>()
@@ -32,10 +36,7 @@ class MarketSummaryService(private val tickerService: TickerService) {
 
     fun marketSummary(date: LocalDate?): MarketSummary {
         val date = date ?: LocalDate.now()
-        val allMetrics = dailyMetrics
-                .find(DailyMetricRow::dailyMetric / DailyMetric::date eq date)
-                .map { it.dailyMetric }
-                .toList()
+        val allMetrics = dailyMetricsService.getDailyMetrics(date)
 
         val tickers = allMetrics.mapNotNull {
             tickerService.getTicker(it.ticker)

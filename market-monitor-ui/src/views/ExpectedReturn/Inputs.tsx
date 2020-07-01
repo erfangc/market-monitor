@@ -162,7 +162,7 @@ export function Inputs(props: Props) {
             />
             <br/>
             {shortTermEpsGrowths.map(({date, eps}) => (
-                <>
+                <React.Fragment key={date}>
                     <br/>
                     <Space>
                         <DatePicker
@@ -179,7 +179,7 @@ export function Inputs(props: Props) {
                         onClick={() => removeShortTermEpsGrowth(date)}
                     />
                     <br/>
-                </>
+                </React.Fragment>
             ))}
             <br/>
             <Button type="dashed" onClick={addShortTermEpsGrowth} block>

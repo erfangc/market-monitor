@@ -12,7 +12,7 @@ export function CompanyReturnAnalysisSummary(props: Props) {
             <Space>
                 <Statistic
                     title="Expected Return"
-                    value={((companyReturnAnalysis?.expectedReturn ?? 0) * 100).toFixed(1)}
+                    value={((companyReturnAnalysis?.discountRate ?? 0) * 100).toFixed(1)}
                     suffix="%"
                 />
                 <Statistic

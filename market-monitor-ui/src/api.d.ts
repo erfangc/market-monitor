@@ -176,48 +176,6 @@ interface PriceToEarningContributor {
     ticker: string;
 }
 
-interface PricingFunctionOutputs {
-    contributionFromBvps: number;
-    contributionFromCurrentEarnings: number;
-    contributionFromGrowth: number;
-    contributionFromShortTerm: number;
-    contributionFromTerminalValue: number;
-    price: number;
-}
-
-interface Scenario {
-    expectedReturn: number;
-    longTermGrowth: number;
-    price: number;
-}
-
-interface ShortTermEpsGrowth {
-    date: string;
-    eps: number | null;
-    growthRate: number | null;
-}
-
-interface CompanyReturnAnalysis {
-    bvps: number;
-    date: string;
-    eps: number;
-    expectedReturn: number;
-    longTermGrowth: number;
-    priceToEarning: number;
-    pricingFunctionOutputs: PricingFunctionOutputs;
-    scenarios: Scenario[];
-    shortTermEpsGrowths: ShortTermEpsGrowth[];
-    ticker: string;
-}
-
-interface CompanyReturnAnalysisRequest {
-    date: string | null;
-    longTermGrowth: number;
-    price: number | null;
-    shortTermEpsGrowths: ShortTermEpsGrowth[];
-    ticker: string;
-}
-
 interface Ticker {
     category: string | null;
     companysite: string | null;
@@ -246,5 +204,49 @@ interface Ticker {
     sicindustry: string | null;
     sicsector: string | null;
     table: string;
+    ticker: string;
+}
+
+interface PricingFunctionOutputs {
+    contributionFromBvps: number;
+    contributionFromCurrentEarnings: number;
+    contributionFromGrowth: number;
+    contributionFromShortTerm: number;
+    contributionFromTerminalValue: number;
+    price: number;
+}
+
+interface Scenario {
+    expectedReturn: number;
+    longTermGrowth: number;
+    price: number;
+}
+
+interface ShortTermEpsGrowth {
+    date: string;
+    eps: number | null;
+    growthRate: number | null;
+}
+
+interface CompanyReturnAnalysis {
+    _id: string;
+    bvps: number;
+    date: string;
+    discountRate: number;
+    eps: number;
+    longTermGrowth: number;
+    meta: Ticker;
+    priceToEarning: number;
+    pricingFunctionOutputs: PricingFunctionOutputs;
+    scenarios: Scenario[];
+    shortTermEpsGrowths: ShortTermEpsGrowth[];
+    ticker: string;
+}
+
+interface CompanyReturnAnalysisRequest {
+    date: string | null;
+    longTermGrowth: number;
+    price: number | null;
+    shortTermEpsGrowths: ShortTermEpsGrowth[];
     ticker: string;
 }

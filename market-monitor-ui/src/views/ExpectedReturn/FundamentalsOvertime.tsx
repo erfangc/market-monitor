@@ -29,8 +29,7 @@ export function FundamentalsOvertime(props: Props) {
 
     const operatingLeverage: Highcharts.SeriesOptionsType = {
         type: 'column',
-        name: 'Margin Analysis',
-        yAxis: 1,
+        name: 'Operating Leverage',
         data: fundamentals.map((
             {
                 reportperiod,
@@ -41,7 +40,7 @@ export function FundamentalsOvertime(props: Props) {
         ) => {
             const grossProfit = (revenue ?? 0) - (cor ?? 0)
             const fixedCost = sgna ?? 0
-            const y = grossProfit / (fixedCost || 0.0)
+            const y = grossProfit / (grossProfit - fixedCost)
             return {x: moment(reportperiod).valueOf(), y};
         })
     };
@@ -69,21 +68,12 @@ export function FundamentalsOvertime(props: Props) {
         xAxis: {
             type: "datetime"
         },
-        yAxis: [
-            {
-                title: {
-                    text: 'Revenue'
-                },
-                gridLineWidth: 0
+        yAxis: {
+            title: {
+                text: 'Operating Leverage'
             },
-            {
-                title: {
-                    text: 'Net Margin %'
-                },
-                opposite: true,
-                gridLineWidth: 0
-            }
-        ],
+            gridLineWidth: 0
+        },
         series: [operatingLeverage]
     };
 
