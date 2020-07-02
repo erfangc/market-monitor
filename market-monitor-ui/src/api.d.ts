@@ -224,8 +224,7 @@ interface Scenario {
 
 interface ShortTermEpsGrowth {
     date: string;
-    eps: number | null;
-    growthRate: number | null;
+    eps: number;
 }
 
 interface CompanyReturnAnalysis {

@@ -2,10 +2,15 @@ package com.github.erfangc.marketmonitor.analysis.companyreturn
 
 import com.github.erfangc.marketmonitor.alphavantage.AlphaVantageService
 import com.github.erfangc.marketmonitor.analysis.companyreturn.models.*
+import com.github.erfangc.marketmonitor.dailymetrics.DailyMetricsService
 import com.github.erfangc.marketmonitor.fundamentals.FundamentalsService
+import com.github.erfangc.marketmonitor.fundamentals.models.Fundamental
+import com.github.erfangc.marketmonitor.io.MongoDB.database
 import com.github.erfangc.marketmonitor.mostRecentWorkingDay
+import com.github.erfangc.marketmonitor.previousWorkingDay
 import com.github.erfangc.marketmonitor.tickers.TickerService
 import com.github.erfangc.marketmonitor.yfinance.YFinanceService
+import org.litote.kmongo.getCollection
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -19,14 +24,40 @@ class CompanyReturnAnalysisService(
         private val fundamentalsService: FundamentalsService,
         private val tickerService: TickerService,
         private val yFinanceService: YFinanceService,
+        private val dailyMetricsService: DailyMetricsService,
         private val alphaVantageService: AlphaVantageService
 ) {
-
-    private fun yearFrac(from: LocalDate, to: LocalDate) = ChronoUnit.DAYS.between(from, to) / 365.2425
 
     private val log = LoggerFactory.getLogger(CompanyReturnAnalysisService::class.java)
 
     internal data class PvFromShortTerm(val pv: Double, val valuationDate: LocalDate, val eps: Double)
+
+    companion object {
+        val companyReturnAnalysesCollection = database.getCollection<CompanyReturnAnalysis>()
+    }
+
+    fun saveDailyAnalysis(date: LocalDate? = null) {
+        val date = date ?: LocalDate.now().previousWorkingDay()
+        log.info("Performing expected return analysis in the top 500 funds by market cap on $date")
+        val rows = dailyMetricsService
+                .getDailyMetrics(date)
+                .sortedByDescending { it.marketcap }
+                .take(500)
+                .mapNotNull { dailyMetric ->
+                    val ticker = dailyMetric.ticker
+                    log.info("Analyzing expected returns for $ticker as of $date")
+                    try {
+                        val request = getCompanyReturnAnalysisRequest(ticker)
+                        companyReturnAnalysis(request)
+                    } catch (e: Exception) {
+                        log.error("Unable to compute expected return analysis for $ticker on $date, message=${e.message}")
+                        null
+                    }
+                }
+        companyReturnAnalysesCollection.drop()
+        val result = companyReturnAnalysesCollection.insertMany(rows)
+        log.info("Saved ${result.insertedIds.size} rows into MongoDB collection ${CompanyReturnAnalysis::class.simpleName}")
+    }
 
     fun getCompanyReturnAnalysisRequest(ticker: String): CompanyReturnAnalysisRequest {
         val rows = yFinanceService.getEarningsEstimate(ticker)
@@ -48,6 +79,8 @@ class CompanyReturnAnalysisService(
         )
 
     }
+
+    private fun yearFrac(from: LocalDate, to: LocalDate) = ChronoUnit.DAYS.between(from, to) / 365.2425
 
     private fun tryParsingEpsForCurrentFY(
             currentFy: LocalDate,
@@ -75,16 +108,24 @@ class CompanyReturnAnalysisService(
         val ticker = request.ticker
         val mrt = fundamentalsService.getMRT(ticker = ticker, notAfter = date)
         val longTermGrowth = request.longTermGrowth
-        val shortTermEpsGrowth = request.shortTermEpsGrowths
 
         if (mrt.isEmpty()) {
             error("Dimension MRT Fundamental data is unavailable for $ticker on $date")
         }
         val fundamental = mrt.last()
 
-        val eps = fundamental.eps ?: error("EPS is unavailable for $ticker on $date")
-        val bvps = fundamental.bvps ?: error("BVPS is unavailable for $ticker on $date")
+        val eps = fundamental.epsusd ?: error("EPS is unavailable for $ticker on $date")
+        val bvps = tbvps(fundamental) ?: 0.0
+        val fx = fundamental.fxusd ?: 1.0
         val price = request.price ?: fundamental.price ?: error("Price is unavailable for $ticker on $date")
+
+        if (price == 0.0) {
+            error("Price for $ticker cannot be 0.0")
+        }
+
+        val shortTermEpsGrowth = request.shortTermEpsGrowths.map {
+            it.copy(eps = it.eps / fx)
+        }
 
         val fn = goalSeekFunctionGenerator(
                 inputs = GoalSeekFunctionInputs(
@@ -98,6 +139,7 @@ class CompanyReturnAnalysisService(
         )
 
         val discountRate = bisection(initialMin = longTermGrowth, initialMax = 1.0, fn = fn)
+
         val pricingFunctionOutputs = pricingFunction(
                 PricingFunctionInputs(
                         date = date,
@@ -124,6 +166,24 @@ class CompanyReturnAnalysisService(
                 longTermGrowth = longTermGrowth,
                 pricingFunctionOutputs = pricingFunctionOutputs
         )
+    }
+
+    /**
+     * We compute the Tangible Book Value per Share
+     * as the per share value derived by subtracting intangibles from total asset
+     * then subtracting liabilities
+     */
+    private fun tbvps(fundamental: Fundamental): Double? {
+        val assets = fundamental.assets
+        val liabilities = fundamental.liabilities
+        val intangibles = fundamental.intangibles ?: 0.0
+        val shareswa = fundamental.shareswa
+        val fx = fundamental.fxusd ?: 1.0
+        return if (assets != null && liabilities != null && shareswa != null) {
+            ((assets - liabilities - intangibles) / shareswa) / fx
+        } else {
+            null
+        }
     }
 
     /**
@@ -154,7 +214,6 @@ class CompanyReturnAnalysisService(
      * @param max the upper bound for guess
      */
     private fun bisection(initialMin: Double, initialMax: Double, fn: (Double) -> Double): Double {
-
         //
         // use bi-section method on fn(r)
         // assume r must be between 0% and 100%
@@ -206,11 +265,7 @@ class CompanyReturnAnalysisService(
             val stgDate = stg.date
             val yearFrac = yearFrac(date, stgDate)
             val discountFactor = 1 / (1 + discountRate).pow(yearFrac)
-            val lastEps = if (acc.isEmpty()) eps else acc.last().eps
-
-            val newEps = if (stg.growthRate != null) lastEps * (1 + stg.growthRate) else stg.eps
-                    ?: error("Either growthRate or eps must be provided")
-
+            val newEps = stg.eps
             acc + PvFromShortTerm(pv = newEps * discountFactor, valuationDate = stgDate, eps = newEps)
         }
 
@@ -220,16 +275,17 @@ class CompanyReturnAnalysisService(
         val terminalDiscountFactor = 1 / (1 + discountRate).pow(yearFrac(date, lastValuationDate))
         val contributionFromTerminalValue = terminalValue * terminalDiscountFactor
         val contributionFromShortTerm = pvsFromShortTerm.sumByDouble { it.pv }
+        val discountedBvps = bvps * terminalDiscountFactor
 
         // share price = current book value + short-term growth + terminal value
-        val price = bvps + contributionFromShortTerm + contributionFromTerminalValue
+        val price = discountedBvps + contributionFromShortTerm + contributionFromTerminalValue
 
         val contributionFromCurrentEarnings = eps / discountRate
-        val contributionFromGrowth = price - contributionFromCurrentEarnings - bvps
+        val contributionFromGrowth = price - contributionFromCurrentEarnings - discountedBvps
 
         return PricingFunctionOutputs(
                 price = price,
-                contributionFromBvps = bvps,
+                contributionFromBvps = discountedBvps,
                 contributionFromCurrentEarnings = contributionFromCurrentEarnings,
                 contributionFromGrowth = contributionFromGrowth,
                 contributionFromShortTerm = contributionFromShortTerm,

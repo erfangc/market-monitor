@@ -1,5 +1,5 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
-import {AutoComplete, Button, Card, DatePicker, Input, InputNumber, Space} from "antd";
+import {AutoComplete, Button, Card, Col, DatePicker, Input, InputNumber, Row, Space} from "antd";
 import {MinusCircleOutlined, PlusOutlined} from '@ant-design/icons';
 import moment from "moment";
 import axios from 'axios';
@@ -19,12 +19,10 @@ const initialState: CompanyReturnAnalysisRequest = {
     shortTermEpsGrowths: [
         {
             eps: 0.0,
-            growthRate: null,
             date: now.add(1, 'year').format("YYYY-MM-DD")
         },
         {
             eps: 0.0,
-            growthRate: null,
             date: now.add(2, 'year').format("YYYY-MM-DD")
         }
     ],
@@ -35,7 +33,8 @@ const initialState: CompanyReturnAnalysisRequest = {
 export function Inputs(props: Props) {
 
     const [request, setRequest] = useState<CompanyReturnAnalysisRequest>(initialState);
-    const [tickerOptions, setTickerOptions] = useState<{ value: string }[]>([]);
+    const [tickerOptions, setTickerOptions] = useState<Ticker[]>([]);
+    const [value, setValue] = useState<string>('');
     const history = useHistory();
 
     /**
@@ -51,8 +50,8 @@ export function Inputs(props: Props) {
         props.onChange(apiResponse.data);
     }
 
-    // eslint-disable-next-line
     useEffect(() => {
+        // eslint-disable-next-line
         autoPopulateRequest(props.ticker)
     }, [props.ticker]);
 
@@ -69,13 +68,13 @@ export function Inputs(props: Props) {
         setRequest({...request, price: parseFloat(value)})
     }
 
-    function handleTickerChange(ticker: string) {
+    function handleTickerSelect(ticker: string) {
         history.push(`/expected-return/${ticker}`);
     }
 
     async function handleTickerSearch(term: string) {
         const {data} = await axios.get<Ticker[]>('/api/tickers/_match', {params: {term}});
-        setTickerOptions(data.map(({ticker}) => ({value: ticker})));
+        setTickerOptions(data);
     }
 
     function removeShortTermEpsGrowth(date: string) {
@@ -86,16 +85,15 @@ export function Inputs(props: Props) {
     }
 
     function addShortTermEpsGrowth() {
+        // determine the last date for which there is an EPS estimate
+        // by default the next EPS estimate date is 1 year from that date
         const lastEpsDate = shortTermEpsGrowths.length !== 0
             ? shortTermEpsGrowths[shortTermEpsGrowths.length - 1].date
             : undefined;
-
         const shortTermEpsGrowth: ShortTermEpsGrowth = {
             date: plusOneYear(lastEpsDate),
-            eps: 1,
-            growthRate: null
+            eps: 1
         };
-
         setRequest({
             ...request,
             shortTermEpsGrowths: [
@@ -105,7 +103,9 @@ export function Inputs(props: Props) {
         });
     }
 
-    function handleLtGrowthChange({currentTarget: {value}}: ChangeEvent<HTMLInputElement>) {
+    function handleLongTermGrowthUpdate(
+        {currentTarget: {value}}: ChangeEvent<HTMLInputElement>
+    ) {
         setRequest({...request, longTermGrowth: parseFloat(value)});
     }
 
@@ -138,6 +138,10 @@ export function Inputs(props: Props) {
         props.onChange(request);
     }
 
+    function handleTickerChange(newValue: string) {
+        setValue(newValue);
+    }
+
     return (
         <Card title="Inputs">
             <DatePicker
@@ -146,12 +150,22 @@ export function Inputs(props: Props) {
             />
             <br/><br/>
             <AutoComplete
-                options={tickerOptions}
-                style={{width: 200}}
-                onSelect={handleTickerChange}
+                style={{width: '100%'}}
+                onChange={handleTickerChange}
                 onSearch={handleTickerSearch}
-                placeholder="Search for a ticker"
-            />
+                onSelect={handleTickerSelect}
+                placeholder="Search ticker"
+                value={value}
+            >
+                {tickerOptions.map(({ticker, name}, idx) => (
+                    <AutoComplete.Option key={idx} value={ticker}>
+                        <Row>
+                            <Col span={12}>{ticker}</Col>
+                            <Col span={12}>{name}</Col>
+                        </Row>
+                    </AutoComplete.Option>
+                ))}
+            </AutoComplete>
             <br/><br/>
             <Input
                 placeholder="Enter a price"
@@ -182,7 +196,7 @@ export function Inputs(props: Props) {
                 </React.Fragment>
             ))}
             <br/>
-            <Button type="dashed" onClick={addShortTermEpsGrowth} block>
+            <Button block type="dashed" onClick={addShortTermEpsGrowth}>
                 <PlusOutlined/> Add EPS Estimate
             </Button>
             <br/><br/>
@@ -191,12 +205,10 @@ export function Inputs(props: Props) {
                 type="number"
                 placeholder="Enter a LT Estimate"
                 value={longTermGrowth}
-                onChange={handleLtGrowthChange}
+                onChange={handleLongTermGrowthUpdate}
             />
             <br/><br/>
-            <Button onClick={submit}>
-                Submit
-            </Button>
+            <Button onClick={submit}>Submit</Button>
         </Card>
     );
 

@@ -3,6 +3,7 @@ package com.github.erfangc.marketmonitor.analysis.companyreturn
 import com.github.erfangc.marketmonitor.analysis.companyreturn.models.CompanyReturnAnalysis
 import com.github.erfangc.marketmonitor.analysis.companyreturn.models.CompanyReturnAnalysisRequest
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDate
 
 @RestController
 @ExperimentalStdlibApi
@@ -10,6 +11,11 @@ import org.springframework.web.bind.annotation.*
 class CompanyReturnAnalysisController(
         private val companyReturnAnalysisService: CompanyReturnAnalysisService
 ) {
+    @PostMapping("_save-daily-analysis")
+    fun saveDailyAnalysis(@RequestParam(required = false) date: LocalDate? = null) {
+        return companyReturnAnalysisService.saveDailyAnalysis(date)
+    }
+
     @PostMapping
     fun companyReturnAnalysis(@RequestBody request: CompanyReturnAnalysisRequest): CompanyReturnAnalysis {
         return companyReturnAnalysisService.companyReturnAnalysis(request)
