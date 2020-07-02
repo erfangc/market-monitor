@@ -19,6 +19,13 @@ export function FundamentalsOvertime(props: Props) {
         ) => ({y: revenue, x: moment(reportperiod).valueOf()}))
     };
 
+    const grossProfit: Highcharts.SeriesOptionsType = {
+        type: 'column',
+        name: 'Gross Profit',
+        data: fundamentals.map(({reportperiod, cor, revenue}) =>
+            ({y: (revenue ?? 0) - (cor ?? 0), x: moment(reportperiod).valueOf()}))
+    }
+
     const netIncome: Highcharts.SeriesOptionsType = {
         type: 'column',
         name: 'Net Income',
@@ -58,7 +65,7 @@ export function FundamentalsOvertime(props: Props) {
         xAxis: {
             type: "datetime"
         },
-        series: [revenue, netIncome]
+        series: [revenue, grossProfit, netIncome]
     };
 
     const marginAnalysis: Highcharts.Options = {
