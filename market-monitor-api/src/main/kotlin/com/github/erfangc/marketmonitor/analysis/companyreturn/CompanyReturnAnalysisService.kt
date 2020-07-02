@@ -66,7 +66,7 @@ class CompanyReturnAnalysisService(
         val now = LocalDate.now()
         val shortTermEpsGrowths = try {
             tryParsingEpsForCurrentFY(currentFy = now, row = row)
-        } catch (e: IllegalArgumentException) {
+        } catch (e: IllegalStateException) {
             tryParsingEpsForCurrentFY(currentFy = now.plusYears(1), row = row)
         }
 
@@ -91,10 +91,11 @@ class CompanyReturnAnalysisService(
             "$adjective Year (${date.year})"
         }
         val nextYear = currentFy.plusYears(1)
-        return listOf(currentFy, nextYear).map {
+        return listOf(currentFy, nextYear).map { date ->
             ShortTermEpsGrowth(
-                    date = it,
-                    eps = row[forYear(it)]?.toDouble() ?: throw IllegalArgumentException()
+                    date = date,
+                    eps = row[forYear(date)]?.toDouble()
+                            ?: error("Unable to find EPS estimate for ${date.year}")
             )
         }
     }
