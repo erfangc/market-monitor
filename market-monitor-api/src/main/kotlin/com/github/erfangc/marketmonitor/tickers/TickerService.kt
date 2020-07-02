@@ -28,11 +28,16 @@ class TickerService(
         tickersCollection.createIndex(Indexes.hashed((TickerRow::ticker / Ticker::ticker).name))
         tickersCollection.createIndex(Indexes.text((TickerRow::ticker / Ticker::ticker).name))
         quandlService.exportQuandl(publisher = "SHARADAR", table = "TICKERS") { response ->
-            val rows = grass<Ticker>().harvest(response.asList()).map {
-                TickerRow(_id = "${it.table}:${it.permaticker}:${it.ticker}", ticker = it)
+            val rows = grass<Ticker>()
+                    .harvest(response.asList())
+                    .filter { it.table == "SF1" }
+                    .map {
+                        TickerRow(_id = "${it.table}:${it.permaticker}:${it.ticker}", ticker = it)
+                    }
+            if (rows.isNotEmpty()) {
+                tickersCollection.insertMany(rows)
+                log.info("Inserted ${rows.size} rows into the ${Ticker::class.simpleName} collection")
             }
-            tickersCollection.insertMany(rows)
-            log.info("Inserted ${rows.size} rows into the ${Ticker::class.simpleName} collection")
         }
     }
 
