@@ -3,6 +3,7 @@ package com.github.erfangc.marketmonitor.analysis.marketsummary
 import com.github.erfangc.marketmonitor.dailymetrics.DailyMetricsService
 import com.github.erfangc.marketmonitor.dailymetrics.models.DailyMetric
 import com.github.erfangc.marketmonitor.io.MongoDB.database
+import com.github.erfangc.marketmonitor.previousWorkingDay
 import com.github.erfangc.marketmonitor.tickers.TickerService
 import org.litote.kmongo.findOneById
 import org.litote.kmongo.getCollection
@@ -35,7 +36,7 @@ class MarketSummaryService(
     }
 
     fun marketSummary(date: LocalDate?): MarketSummary {
-        val date = date ?: LocalDate.now()
+        val date = date ?: LocalDate.now().previousWorkingDay()
         val allMetrics = dailyMetricsService.getDailyMetrics(date)
 
         val tickers = allMetrics.mapNotNull {
@@ -56,7 +57,7 @@ class MarketSummaryService(
 
         return MarketSummary(
                 _id = date.toString(),
-                date = date!!,
+                date = date,
                 totalMarketCap = positiveMc + negativeMc,
                 marketCapWeightedPe = marketCapWeightedPe,
                 medianPe = positivePe.mapNotNull { it.pe }.median(),
