@@ -12,8 +12,11 @@ class CompanyReturnAnalysisController(
         private val companyReturnAnalysisService: CompanyReturnAnalysisService
 ) {
     @PostMapping("_save-daily-analysis")
-    fun saveDailyAnalysis(@RequestParam(required = false) date: LocalDate? = null) {
-        return companyReturnAnalysisService.saveDailyAnalysis(date)
+    fun saveDailyAnalysis(
+            @RequestParam(required = false) date: LocalDate? = null,
+            @RequestParam(required = false) drop: Boolean? = null
+    ) {
+        return companyReturnAnalysisService.performDailyAnalysis(date, drop)
     }
 
     @PostMapping
