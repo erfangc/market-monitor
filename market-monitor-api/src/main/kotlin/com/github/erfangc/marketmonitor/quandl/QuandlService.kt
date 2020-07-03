@@ -2,7 +2,7 @@ package com.github.erfangc.marketmonitor.quandl
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.erfangc.marketmonitor.io.ApiKeys.quandlApiKey
-import com.github.erfangc.marketmonitor.quandl.models.QuandlExportResponse
+import com.github.erfangc.marketmonitor.quandl.models.QuandlTable
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClientBuilder
 import org.slf4j.LoggerFactory
@@ -17,7 +17,7 @@ class QuandlService(private val objectMapper: ObjectMapper) {
     fun exportQuandl(
             publisher: String,
             table: String,
-            callback: (QuandlExportResponse) -> Unit
+            callback: (QuandlTable) -> Unit
     ) {
         var cursorId: String? = null
         var batch = 1
@@ -31,7 +31,7 @@ class QuandlService(private val objectMapper: ObjectMapper) {
 
     }
 
-    private fun queryQuandl(publisher: String, table: String, cursorId: String?): QuandlExportResponse {
+    private fun queryQuandl(publisher: String, table: String, cursorId: String?): QuandlTable {
         val uri = ("https://www.quandl.com/api/v3/datatables/$publisher/$table.json?&api_key=${quandlApiKey}"
                 + (cursorId?.let { "&qopts.cursor_id=$it" } ?: ""))
         val httpGet = HttpGet(uri)
@@ -42,7 +42,7 @@ class QuandlService(private val objectMapper: ObjectMapper) {
                 .execute(httpGet)
                 .entity
                 .content
-        return objectMapper.readValue(inputStream, QuandlExportResponse::class.java)
+        return objectMapper.readValue(inputStream, QuandlTable::class.java)
     }
 
 }

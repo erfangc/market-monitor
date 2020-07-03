@@ -1,6 +1,5 @@
 package com.github.erfangc.marketmonitor.analysis.companyreturn
 
-import com.github.erfangc.marketmonitor.alphavantage.AlphaVantageService
 import com.github.erfangc.marketmonitor.analysis.companyreturn.models.*
 import com.github.erfangc.marketmonitor.dailymetrics.DailyMetricsService
 import com.github.erfangc.marketmonitor.fundamentals.FundamentalsService
@@ -8,6 +7,7 @@ import com.github.erfangc.marketmonitor.fundamentals.models.Fundamental
 import com.github.erfangc.marketmonitor.io.MongoDB.database
 import com.github.erfangc.marketmonitor.mostRecentWorkingDay
 import com.github.erfangc.marketmonitor.previousWorkingDay
+import com.github.erfangc.marketmonitor.prices.PriceService
 import com.github.erfangc.marketmonitor.tickers.TickerService
 import com.github.erfangc.marketmonitor.yfinance.YFinanceService
 import org.litote.kmongo.getCollection
@@ -25,7 +25,7 @@ class CompanyReturnAnalysisService(
         private val tickerService: TickerService,
         private val yFinanceService: YFinanceService,
         private val dailyMetricsService: DailyMetricsService,
-        private val alphaVantageService: AlphaVantageService
+        private val priceService: PriceService
 ) {
 
     private val log = LoggerFactory.getLogger(CompanyReturnAnalysisService::class.java)
@@ -75,7 +75,7 @@ class CompanyReturnAnalysisService(
                 date = now,
                 longTermGrowth = 0.03,
                 shortTermEpsGrowths = shortTermEpsGrowths,
-                price = alphaVantageService.getPrice(ticker)
+                price = priceService.getPrice(ticker)
         )
 
     }

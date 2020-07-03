@@ -1,6 +1,6 @@
 package com.github.erfangc.marketmonitor.quandl.models
 
-data class QuandlExportResponse(
+data class QuandlTable(
         val datatable: DataTable,
         val meta: Meta
 ) {
