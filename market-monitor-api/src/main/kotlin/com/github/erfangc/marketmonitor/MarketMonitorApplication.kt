@@ -2,6 +2,7 @@ package com.github.erfangc.marketmonitor
 
 import com.github.erfangc.marketmonitor.analysis.company.models.CompanyAnalysis
 import com.github.erfangc.marketmonitor.analysis.company.models.CompanyAnalysisRequest
+import com.github.erfangc.marketmonitor.analysis.summary.models.SummaryAnalysis
 import com.github.erfangc.marketmonitor.assets.Asset
 import com.github.erfangc.marketmonitor.dailymetrics.models.DailyMetric
 import com.github.erfangc.marketmonitor.fundamentals.models.Fundamental
@@ -40,13 +41,14 @@ fun main(args: Array<String>) {
 private fun typescriptDefinitionText(): String {
 	return TypeScriptGenerator(
             rootClasses = setOf(
-                    ApiError::class,
-                    DailyMetric::class,
-                    Fundamental::class,
-                    CompanyAnalysis::class,
-                    CompanyAnalysisRequest::class,
-                    Asset::class
-            ),
+					ApiError::class,
+					DailyMetric::class,
+					Fundamental::class,
+					CompanyAnalysis::class,
+					CompanyAnalysisRequest::class,
+					SummaryAnalysis::class,
+					Asset::class
+			),
             mappings = mapOf(
                     LocalDate::class to "string"
             )

@@ -3,6 +3,7 @@ import {Layout, Menu} from "antd";
 import {Route, useLocation} from "react-router";
 import {Link} from "react-router-dom";
 import {CompanyAnalysisView} from "./views/CompanyAnalysis/CompanyAnalysisView";
+import {SummaryAnalysisView} from "./views/SummaryAnalysis/SummaryAnalysisView";
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
                 </Menu>
             </Layout.Header>
             <Layout.Content style={{padding: '24px'}}>
+                <Route path="/summary-analysis" component={SummaryAnalysisView} exact/>
                 <Route path="/company-analysis" component={CompanyAnalysisView} exact/>
                 <Route path="/company-analysis/:ticker" component={CompanyAnalysisView}/>
             </Layout.Content>

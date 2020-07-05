@@ -215,3 +215,28 @@ interface CompanyAnalysisRequest {
     shortTermEpsGrowths: ShortTermEpsGrowth[];
     ticker: string;
 }
+
+interface SummaryDescription {
+    average: number;
+    max: number;
+    median: number;
+    min: number;
+    skew: number;
+    stddev: number;
+}
+
+interface SectorSummary {
+    bottom20DiscountRate: CompanyAnalysis[];
+    name: string;
+    pctValueFromCurrentEarnings: SummaryDescription;
+    pctValueFromGrowth: SummaryDescription;
+    pctValueFromTbvps: SummaryDescription;
+    pctValueFromTerminalValue: SummaryDescription;
+    top20DiscountRate: CompanyAnalysis[];
+}
+
+interface SummaryAnalysis {
+    sectorSummaries: SectorSummary[];
+    snp500BottomDiscountRates: CompanyAnalysis[];
+    snp500TopDiscountRates: CompanyAnalysis[];
+}

@@ -9,7 +9,7 @@ export function CompanyDescription(props: Props) {
     const {companyAnalysis} = props;
     return (
         <Descriptions bordered>
-            <Descriptions.Item label="Name" span={3}>
+            <Descriptions.Item label="Name">
                 {companyAnalysis?.meta?.name ?? '-'}
             </Descriptions.Item>
             <Descriptions.Item label="Category" span={2}>
@@ -20,6 +20,11 @@ export function CompanyDescription(props: Props) {
             </Descriptions.Item>
             <Descriptions.Item label="Sector" span={2}>
                 {companyAnalysis?.meta?.sector ?? '-'}
+            </Descriptions.Item>
+            <Descriptions.Item label="Website" span={2}>
+                <a href={`${companyAnalysis?.meta?.companysite ?? '-'}`}>
+                    Company Web Site
+                </a>
             </Descriptions.Item>
             <Descriptions.Item label="Industry" span={2}>
                 {companyAnalysis?.meta?.industry ?? '-'}

@@ -26,9 +26,9 @@ class CompanyReturnSummaryService(private val companyAnalysisService: CompanyAna
             results = CompanyAnalysisService.companyReturnAnalysesCollection.find().toList()
         }
         val sectorSummaries = sectorSummaries(results)
-        val snp500 = snp500(results)
-        val snp500TopDiscountRates = snp500.sortedByDescending { it.discountRate }.take(20)
-        val snp500BottomDiscountRates = snp500.sortedBy { it.discountRate }.take(20)
+        val snp500 = snp500(results).sortedBy { it.discountRate }
+        val snp500TopDiscountRates = snp500.takeLast(20)
+        val snp500BottomDiscountRates = snp500.take(20)
 
         return SummaryAnalysis(
                 sectorSummaries = sectorSummaries,
@@ -78,9 +78,9 @@ class CompanyReturnSummaryService(private val companyAnalysisService: CompanyAna
         val byTicker = results.associateBy { it.ticker }
         return downloadTable(publisher = "SHARADAR", table = "SP500")
                 .asList()
-                .mapNotNull { row ->
-                    byTicker[row["ticker"]]
-                }
+                .mapNotNull { it["ticker"] }
+                .distinct()
+                .mapNotNull { byTicker[it] }
     }
 
     private fun summaryDescription(values: List<Double>): SummaryDescription {

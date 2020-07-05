@@ -19,6 +19,9 @@ HighchartsMore(Highcharts);
 // @ts-ignore
 Highcharts.theme = {
     colors,
+    lang: {
+        numericSymbols: [' K', ' Mil', ' Bn']
+    },
     chart: {
         backgroundColor: '#141414',
         style: {
