@@ -3,7 +3,7 @@ package com.github.erfangc.marketmonitor.fundamentals
 import com.github.erfangc.marketmonitor.fundamentals.models.Fundamental
 import com.github.erfangc.marketmonitor.fundamentals.models.FundamentalRow
 import com.github.erfangc.marketmonitor.io.MongoDB.database
-import com.github.erfangc.marketmonitor.quandl.QuandlService
+import com.github.erfangc.marketmonitor.quandl.QuandlService.exportQuandl
 import com.mongodb.client.model.Indexes
 import com.vhl.blackmo.grass.dsl.grass
 import org.litote.kmongo.*
@@ -14,9 +14,7 @@ import java.time.LocalDate
 
 @Service
 @ExperimentalStdlibApi
-class FundamentalsService(
-        private val quandlService: QuandlService
-) {
+class FundamentalsService {
 
     companion object {
         val fundamentals = database.getCollection<FundamentalRow>()
@@ -42,7 +40,8 @@ class FundamentalsService(
         return getForDimension(notAfter, dimension, ticker)
     }
 
-    fun load() {
+    fun bootstrap() {
+        log.info("Bootstrapping fundamental data from Quandl and saving the results to MongoDB")
         fundamentals.drop()
         fundamentals.createIndex(Indexes.ascending(
                 (FundamentalRow::fundamental / Fundamental::reportperiod).name
@@ -50,7 +49,7 @@ class FundamentalsService(
         fundamentals.createIndex(Indexes.compoundIndex(Indexes.hashed(
                 (FundamentalRow::fundamental / Fundamental::ticker).name
         )))
-        quandlService.exportQuandl(publisher = "SHARADAR", table = "SF1") { response ->
+        exportQuandl(publisher = "SHARADAR", table = "SF1") { response ->
             val fundamentalRows = grass<Fundamental>()
                     .harvest(response.asList())
                     .map {

@@ -35,7 +35,7 @@ class FundamentalsController(private val fundamentalsService: FundamentalsServic
     }
 
     @PostMapping
-    fun load() {
-        fundamentalsService.load()
+    fun bootstrap() {
+        fundamentalsService.bootstrap()
     }
 }

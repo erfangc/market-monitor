@@ -13,13 +13,13 @@ import java.time.LocalDate
 class DailyMetricsController constructor(
         private val dailyMetricsService: DailyMetricsService
 ) {
-    @PostMapping("_recreate_table")
-    fun recreateTable() {
-        dailyMetricsService.recreateTable()
+    @PostMapping("_bootstrap")
+    fun bootstrap() {
+        dailyMetricsService.bootstrap()
     }
 
     @PostMapping("_load_for_today")
-    fun loadForToday(){
+    fun loadForToday() {
         dailyMetricsService.loadForToday()
     }
 

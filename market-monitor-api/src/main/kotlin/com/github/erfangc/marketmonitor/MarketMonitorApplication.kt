@@ -1,12 +1,10 @@
 package com.github.erfangc.marketmonitor
 
-import com.github.erfangc.marketmonitor.analysis.companyreturn.models.CompanyReturnAnalysis
-import com.github.erfangc.marketmonitor.analysis.companyreturn.models.CompanyReturnAnalysisRequest
-import com.github.erfangc.marketmonitor.analysis.marketsummary.MarketSummary
-import com.github.erfangc.marketmonitor.analysis.pecontr.PriceToEarningContributor
+import com.github.erfangc.marketmonitor.analysis.company.models.CompanyAnalysis
+import com.github.erfangc.marketmonitor.analysis.company.models.CompanyAnalysisRequest
+import com.github.erfangc.marketmonitor.assets.Asset
 import com.github.erfangc.marketmonitor.dailymetrics.models.DailyMetric
 import com.github.erfangc.marketmonitor.fundamentals.models.Fundamental
-import com.github.erfangc.marketmonitor.tickers.Ticker
 import me.ntrrgc.tsGenerator.TypeScriptGenerator
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -41,18 +39,16 @@ fun main(args: Array<String>) {
 
 private fun typescriptDefinitionText(): String {
 	return TypeScriptGenerator(
-			rootClasses = setOf(
-                    MarketSummary::class,
+            rootClasses = setOf(
                     ApiError::class,
                     DailyMetric::class,
                     Fundamental::class,
-                    PriceToEarningContributor::class,
-                    CompanyReturnAnalysis::class,
-                    CompanyReturnAnalysisRequest::class,
-                    Ticker::class
+                    CompanyAnalysis::class,
+                    CompanyAnalysisRequest::class,
+                    Asset::class
             ),
-			mappings = mapOf(
+            mappings = mapOf(
                     LocalDate::class to "string"
             )
-	).definitionsText
+    ).definitionsText
 }

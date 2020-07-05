@@ -43,7 +43,8 @@ class DailyMetricsService {
         )?.dailyMetric
     }
 
-    fun recreateTable() {
+    fun bootstrap() {
+        log.info("Bootstrapping daily metrics from Quandl and saving the results to MongoDB")
         dailyMetrics.drop()
         dailyMetrics.createIndex(Indexes.ascending((DailyMetricRow::dailyMetric / DailyMetric::date).name))
         dailyMetrics.createIndex(Indexes.hashed((DailyMetricRow::dailyMetric / DailyMetric::ticker).name))

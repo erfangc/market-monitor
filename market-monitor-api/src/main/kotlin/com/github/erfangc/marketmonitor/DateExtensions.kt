@@ -2,22 +2,23 @@ package com.github.erfangc.marketmonitor
 
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.temporal.ChronoField
-import java.time.temporal.ChronoUnit
-
-fun LocalDate.mostRecentWorkingDay(): LocalDate {
-    return when (DayOfWeek.of(this.get(ChronoField.DAY_OF_WEEK))) {
-        DayOfWeek.SUNDAY -> this.minus(2, ChronoUnit.DAYS)
-        DayOfWeek.SATURDAY -> this.minus(1, ChronoUnit.DAYS)
-        else -> this
-    }
-}
 
 fun LocalDate.previousWorkingDay(): LocalDate {
-    return when (DayOfWeek.of(this.get(ChronoField.DAY_OF_WEEK))) {
-        DayOfWeek.MONDAY -> this.minus(3, ChronoUnit.DAYS)
-        DayOfWeek.SUNDAY -> this.minus(2, ChronoUnit.DAYS)
-        else -> this.minusDays(1)
+    var date = this.minusDays(1)
+    while (date.isHoliday() || date.isWeekend()) {
+        date = date.minusDays(1)
     }
+    return date
 }
 
+private val holidays = listOf(
+        LocalDate.of(2020, 7, 3)
+)
+
+fun LocalDate.isHoliday(): Boolean {
+    return holidays.contains(this)
+}
+
+fun LocalDate.isWeekend(): Boolean {
+    return this.dayOfWeek == DayOfWeek.SATURDAY || this.dayOfWeek == DayOfWeek.SUNDAY
+}

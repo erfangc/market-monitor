@@ -2,28 +2,37 @@ import React from 'react';
 import {Layout, Menu} from "antd";
 import {Route, useLocation} from "react-router";
 import {Link} from "react-router-dom";
-import {MarketOverview} from "./views/MarketOverview/MarketOverview";
-import {ExpectedReturn} from "./views/ExpectedReturn/ExpectedReturn";
+import {CompanyAnalysisView} from "./views/CompanyAnalysis/CompanyAnalysisView";
 
 
 function App() {
     const {pathname} = useLocation();
+
+    const menuItems = [
+        {
+            key: '/summary-analysis',
+            text: 'Summary Analysis'
+        },
+        {
+            key: '/company-analysis',
+            text: 'Company Analysis'
+        }
+    ];
+    const selectedKeys = menuItems.filter(({key}) => pathname.startsWith(key)).map(({key}) => key);
     return (
         <Layout>
             <Layout.Header>
-                <Menu theme="dark" mode="horizontal" selectedKeys={[pathname]}>
-                    <Menu.Item key="/market-overview">
-                        <Link to="/market-overview">Market Overview</Link>
-                    </Menu.Item>
-                    <Menu.Item key="/expected-return">
-                        <Link to="/expected-return">Expected Return</Link>
-                    </Menu.Item>
+                <Menu theme="dark" mode="horizontal" selectedKeys={selectedKeys}>
+                    {menuItems.map(({key, text}) => (
+                        <Menu.Item key={key}>
+                            <Link to={key}>{text}</Link>
+                        </Menu.Item>
+                    ))}
                 </Menu>
             </Layout.Header>
             <Layout.Content style={{padding: '24px'}}>
-                <Route path="/market-overview" component={MarketOverview}/>
-                <Route path="/expected-return" component={ExpectedReturn} exact/>
-                <Route path="/expected-return/:ticker" component={ExpectedReturn}/>
+                <Route path="/company-analysis" component={CompanyAnalysisView} exact/>
+                <Route path="/company-analysis/:ticker" component={CompanyAnalysisView}/>
             </Layout.Content>
         </Layout>
     );

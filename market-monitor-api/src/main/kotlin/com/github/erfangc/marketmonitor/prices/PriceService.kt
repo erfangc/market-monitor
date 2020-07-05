@@ -1,10 +1,9 @@
 package com.github.erfangc.marketmonitor.prices
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.erfangc.marketmonitor.io.ApiKeys.quandlApiKey
 import com.github.erfangc.marketmonitor.io.HttpClient.httpClient
 import com.github.erfangc.marketmonitor.previousWorkingDay
-import com.github.erfangc.marketmonitor.quandl.QuandlService
 import com.github.erfangc.marketmonitor.quandl.models.QuandlTable
 import org.apache.http.client.methods.HttpGet
 import org.springframework.cache.annotation.Cacheable
@@ -13,10 +12,10 @@ import java.time.LocalDate
 
 @ExperimentalStdlibApi
 @Service
-class PriceService(
-        private val quandlService: QuandlService,
-        private val objectMapper: ObjectMapper
-) {
+class PriceService {
+
+    private val objectMapper = jacksonObjectMapper()
+
     @Cacheable("getPrice")
     fun getPrice(ticker: String, date: LocalDate? = null): Double {
         val date = LocalDate.now().previousWorkingDay()

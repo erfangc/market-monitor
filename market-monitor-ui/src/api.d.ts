@@ -1,26 +1,3 @@
-interface SubMarketSummary {
-    contributionToTotalMarketPe: number;
-    marketCap: number;
-    marketCapWeightedPe: number;
-    medianPe: number;
-    name: string;
-    percentNegativeEarningMarketCapWeighted: number;
-    percentNegativeEarningUnweighted: number;
-    tickerCount: number;
-}
-
-interface MarketSummary {
-    _id: string;
-    date: string;
-    marketCapWeightedPe: number;
-    medianPe: number;
-    peCount: number;
-    percentNegativeEarningMarketCapWeighted: number;
-    percentNegativeEarningUnweighted: number;
-    sectorSummaries: SubMarketSummary[];
-    totalMarketCap: number;
-}
-
 interface TemporalAccessor {
 }
 
@@ -166,17 +143,7 @@ interface Fundamental {
     workingcapital: number | null;
 }
 
-interface PriceToEarningContributor {
-    industry: string;
-    marketCap: number;
-    name: string;
-    pe: number;
-    peContribution: number;
-    sector: string;
-    ticker: string;
-}
-
-interface Ticker {
+interface Asset {
     category: string | null;
     companysite: string | null;
     currency: string | null;
@@ -216,33 +183,32 @@ interface PricingFunctionOutputs {
     price: number;
 }
 
-interface Scenario {
-    expectedReturn: number;
-    longTermGrowth: number;
-    price: number;
-}
-
 interface ShortTermEpsGrowth {
     date: string;
     eps: number;
 }
 
-interface CompanyReturnAnalysis {
+interface CompanyAnalysis {
     _id: string;
     bvps: number;
     date: string;
     discountRate: number;
     eps: number;
+    ev: number;
+    evebit: number;
+    evebitda: number;
     longTermGrowth: number;
-    meta: Ticker;
+    marketcap: number;
+    meta: Asset;
+    pb: number;
     priceToEarning: number;
     pricingFunctionOutputs: PricingFunctionOutputs;
-    scenarios: Scenario[];
+    ps: number;
     shortTermEpsGrowths: ShortTermEpsGrowth[];
     ticker: string;
 }
 
-interface CompanyReturnAnalysisRequest {
+interface CompanyAnalysisRequest {
     date: string | null;
     longTermGrowth: number;
     price: number | null;
