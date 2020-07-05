@@ -37,12 +37,10 @@ class CompanyAnalysisService(
     fun bootstrap() {
         log.info("Bootstrapping company analysis and saving the results to MongoDB")
         val date = LocalDate.now().previousWorkingDay()
-        val top = 3000
-        log.info("Performing expected return analysis in the top $top funds by market cap on $date")
+        log.info("Performing expected company analysis on $date")
         val rows = dailyMetricsService
                 .getDailyMetrics(date)
-                .sortedByDescending { it.marketcap }
-                .take(top)
+                .filter { (it.marketcap ?: 0.0) > 500 }
                 .mapNotNull { dailyMetric ->
                     val ticker = dailyMetric.ticker
                     log.info("Analyzing expected returns for $ticker as of $date")

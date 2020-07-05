@@ -85,12 +85,12 @@ export function CompanyValueAttribution(
     };
     const valueVsGrowth: Highcharts.Options = {
         title: {
-            text: 'Value from Current Operation vs. Value from Growth'
+            text: 'Value from Current Earnings vs. Value from Growth'
         },
         ...commonOptions,
         series: [
             {
-                name: 'Value from Current Operation vs. Value from Growth',
+                name: 'Value from Current Earnings vs. Value from Growth',
                 type: 'waterfall',
                 data: [
                     {
@@ -118,7 +118,7 @@ export function CompanyValueAttribution(
     };
 
     return (
-        <Card title="Company Value Analysis">
+        <Card title="Company Analysis">
             <Row gutter={[16, 16]}>
                 <Col span={12}>
                     <HighchartsReact highcharts={highcharts} options={shortLongTerm}/>
