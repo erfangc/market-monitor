@@ -227,6 +227,7 @@ interface SummaryDescription {
 
 interface SectorSummary {
     bottom20DiscountRate: CompanyAnalysis[];
+    discountRate: SummaryDescription;
     name: string;
     pctValueFromCurrentEarnings: SummaryDescription;
     pctValueFromGrowth: SummaryDescription;

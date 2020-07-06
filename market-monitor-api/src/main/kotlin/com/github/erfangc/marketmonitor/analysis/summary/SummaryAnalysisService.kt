@@ -59,6 +59,8 @@ class CompanyReturnSummaryService(private val companyAnalysisService: CompanyAna
                             .mapNotNull { it.pricingFunctionOutputs.contributionFromCurrentEarnings / it.pricingFunctionOutputs.price }
                             .filterNot { it.isNaN() }
 
+                    val discountRate = analyses.map { it.discountRate }
+
                     val top20DiscountRate = analyses.sortedByDescending { it.discountRate }.take(20)
                     val bottom20DiscountRate = analyses.sortedBy { it.discountRate }.take(20)
 
@@ -66,6 +68,7 @@ class CompanyReturnSummaryService(private val companyAnalysisService: CompanyAna
                             name = entry.key ?: "N/A",
                             top20DiscountRate = top20DiscountRate,
                             bottom20DiscountRate = bottom20DiscountRate,
+                            discountRate = summaryDescription(discountRate),
                             pctValueFromCurrentEarnings = summaryDescription(pctValueFromCurrentEarnings),
                             pctValueFromGrowth = summaryDescription(pctValueFromGrowth),
                             pctValueFromTbvps = summaryDescription(pctValueFromTbvps),

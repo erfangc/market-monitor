@@ -1,54 +1,65 @@
-import React from 'react';
-import HighchartsReact from "highcharts-react-official";
-import {highcharts} from "../../highcharts";
-import {numberFormat} from "highcharts";
-import {Card} from "antd";
+import React, {useState} from "react";
+import {Card, Radio, Select, Space} from "antd";
+import {CompanyAnalysisTable} from "./CompanyAnalysisTable";
+import {RadioChangeEvent} from "antd/es/radio";
+import {SelectValue} from "antd/es/select";
 
 interface Props {
     summaryAnalysis?: SummaryAnalysis
 }
 
+type Type = 'most-overvalued' | 'most-undervalued';
+
 export function SectorAnalysis(props: Props) {
-    const summaryAnalysis = props.summaryAnalysis?.sectorSummaries ?? []
-    const options: Highcharts.Options = {
-        title: {
-            text: undefined
-        },
-        xAxis: {
-            type: 'category'
-        },
-        yAxis: {
-            title: {
-                text: '%'
-            }
-        },
-        legend: {
-            enabled: false,
-        },
-        plotOptions: {
-            column: {
-                dataLabels: {
-                    enabled: true,
-                    formatter: function () {
-                        return `${numberFormat(this.y ?? 0, 2)}%`
-                    }
-                }
-            }
-        },
-        series: [
-            {
-                type: 'column',
-                data: summaryAnalysis
-                    .map(({name, pctValueFromGrowth: {median: y}}) => ({name, y: y * 100}))
-                    .sort((a, b) => b.y - a.y)
-            }
-        ]
-    };
+
+    const sectorSummaries = props.summaryAnalysis?.sectorSummaries ?? [];
+    const [sectorSummary, setSectorSummary] = useState<SectorSummary>();
+    const [type, setType] = useState<Type>("most-overvalued");
+
+    let widget = null;
+    if (type === "most-overvalued") {
+        widget = <CompanyAnalysisTable companyAnalyses={sectorSummary?.bottom20DiscountRate}/>
+    } else if (type === "most-undervalued") {
+        widget = <CompanyAnalysisTable companyAnalyses={sectorSummary?.top20DiscountRate}/>
+    }
+
+    function handleTypeSelect(e: RadioChangeEvent) {
+        setType(e.target.value);
+    }
+
+    function handleSectorSelect(value: SelectValue) {
+        const found = sectorSummaries.find(({name}) => name === value);
+        setSectorSummary(found);
+    }
+
+    const sectorOptions = sectorSummaries.map(({name}) => ({value: name})) ?? [];
+
+    const title = (
+        <Space>
+            <Select
+                style={{width: '13rem'}}
+                onChange={handleSectorSelect}
+                placeholder="Choose sector"
+                options={sectorOptions}
+            />
+            <Radio.Group
+                value={type}
+                options={[
+                    {value: 'most-undervalued', label: 'Most Undervalued'},
+                    {value: 'most-overvalued', label: 'Most Overvalued'}
+                ]}
+                onChange={handleTypeSelect}
+                optionType="button"
+            />
+        </Space>
+    );
 
     return (
-        <Card title="Median % of Value from Growth by Sector">
-            <HighchartsReact highcharts={highcharts} options={options}/>
-        </Card>
+        <React.Fragment>
+            <Card title={title}>
+                {widget}
+            </Card>
+        </React.Fragment>
     );
 
 }

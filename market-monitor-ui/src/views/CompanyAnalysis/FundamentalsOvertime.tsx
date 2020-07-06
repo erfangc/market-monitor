@@ -34,64 +34,106 @@ export function FundamentalsOvertime(props: Props) {
         ) => ({y: netinc, x: moment(reportperiod).valueOf()}))
     };
 
-    const operatingLeverage: Highcharts.SeriesOptionsType = {
-        type: 'column',
-        name: 'Operating Leverage',
+    const netMargin: Highcharts.SeriesOptionsType = {
+        yAxis: 1,
+        type: 'spline',
+        name: 'Net Margin',
+        data: fundamentals.map((
+            {reportperiod, netinc, revenue}
+        ) => {
+            const netMargin = (netinc ?? 0.0) / (revenue ?? 0.0);
+            return ({y: netMargin * 100, x: moment(reportperiod).valueOf()});
+        })
+    };
+
+    const grossMargin: Highcharts.SeriesOptionsType = {
+        yAxis: 1,
+        marker: {
+            enabled: false,
+        },
+        dashStyle: "Dash",
+        type: 'spline',
+        name: 'Gross Margin',
+        data: fundamentals.map((
+            {reportperiod, grossmargin}
+        ) => {
+            return ({y: (grossmargin ?? 0) * 100, x: moment(reportperiod).valueOf()});
+        })
+    };
+
+    const sgna: Highcharts.SeriesOptionsType = {
+        type: 'spline',
+        name: 'SG&A',
+        yAxis: 1,
         data: fundamentals.map((
             {
                 reportperiod,
-                sgna,
-                revenue,
-                cor
+                sgna
             }
         ) => {
-            const grossProfit = (revenue ?? 0) - (cor ?? 0)
-            const fixedCost = sgna ?? 0
-            const y = grossProfit / (grossProfit - fixedCost)
+            const y = sgna
             return {x: moment(reportperiod).valueOf(), y};
         })
     };
 
-    const revenueAnalysis: Highcharts.Options = {
+    const incomeAnalysis: Highcharts.Options = {
         title: {
             text: 'Revenue vs. Net Income Overtime'
         },
-        yAxis: {
-            title: {
-                text: 'Monetary Amount'
+        yAxis: [
+            {
+                title: {
+                    text: 'Monetary Amount'
+                },
+                gridLineWidth: 0
             },
-            gridLineWidth: 0
-        },
+            {
+                title: {
+                    text: '%'
+                },
+                opposite: true,
+                gridLineWidth: 0
+            }
+        ],
         xAxis: {
             type: "datetime"
         },
-        series: [revenue, grossProfit, netIncome]
+        series: [revenue, grossProfit, netIncome, netMargin, grossMargin]
     };
 
-    const marginAnalysis: Highcharts.Options = {
+    const fixedCostVsRevenue: Highcharts.Options = {
         title: {
-            text: 'Operating Leverage'
+            text: 'Revenue vs. SG&A'
         },
         xAxis: {
             type: "datetime"
         },
-        yAxis: {
-            title: {
-                text: 'Operating Leverage'
+        yAxis: [
+            {
+                title: {
+                    text: 'Revenue'
+                },
+                gridLineWidth: 0
             },
-            gridLineWidth: 0
-        },
-        series: [operatingLeverage]
+            {
+                title: {
+                    text: 'SG&A'
+                },
+                gridLineWidth: 0,
+                opposite: true,
+            }
+        ],
+        series: [revenue, sgna]
     };
 
     return (
         <Card title="Fundamental Recap">
             <Row gutter={[16, 16]}>
                 <Col span={12}>
-                    <HighchartsReact highcharts={highcharts} options={revenueAnalysis}/>
+                    <HighchartsReact highcharts={highcharts} options={incomeAnalysis}/>
                 </Col>
                 <Col span={12}>
-                    <HighchartsReact highcharts={highcharts} options={marginAnalysis}/>
+                    <HighchartsReact highcharts={highcharts} options={fixedCostVsRevenue}/>
                 </Col>
             </Row>
         </Card>

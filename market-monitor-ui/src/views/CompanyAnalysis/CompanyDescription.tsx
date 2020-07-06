@@ -9,13 +9,13 @@ export function CompanyDescription(props: Props) {
     const {companyAnalysis} = props;
     return (
         <Descriptions bordered>
-            <Descriptions.Item label="Name">
+            <Descriptions.Item label="Name" span={2}>
                 {companyAnalysis?.meta?.name ?? '-'}
             </Descriptions.Item>
             <Descriptions.Item label="Category" span={2}>
                 {companyAnalysis?.meta?.category ?? '-'}
             </Descriptions.Item>
-            <Descriptions.Item label="SEC Filings" span={1}>
+            <Descriptions.Item label="SEC Filings" span={2}>
                 <a href={`${companyAnalysis?.meta?.secfilings}`}>Link to SEC</a>
             </Descriptions.Item>
             <Descriptions.Item label="Sector" span={2}>
