@@ -7,6 +7,8 @@ import com.github.erfangc.marketmonitor.quandl.QuandlService.exportQuandl
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Indexes
 import com.vhl.blackmo.grass.dsl.grass
+import org.litote.kmongo.div
+import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
 import org.slf4j.LoggerFactory
@@ -44,7 +46,7 @@ class AssetsService {
 
     @Cacheable("getTickers")
     fun getTicker(ticker: String): Asset? {
-        return assetsCollection.findOne(AssetRow::asset / Asset::ticker eq ticker).asset
+        return assetsCollection.findOne(AssetRow::asset / Asset::ticker eq ticker)?.asset
     }
 
     @Cacheable("matchTicker")
