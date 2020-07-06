@@ -1,4 +1,4 @@
-package com.github.erfangc.marketmonitor
+package com.github.erfangc.marketmonitor.clis
 
 import ch.qos.logback.classic.Level
 import com.github.erfangc.marketmonitor.analysis.company.CompanyAnalysisService

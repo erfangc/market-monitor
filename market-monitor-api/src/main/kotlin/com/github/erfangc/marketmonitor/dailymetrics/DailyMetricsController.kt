@@ -18,12 +18,7 @@ class DailyMetricsController constructor(
         dailyMetricsService.bootstrap()
     }
 
-    @PostMapping("_load_for_today")
-    fun loadForToday() {
-        dailyMetricsService.loadForToday()
-    }
-
-    @PostMapping("_load_for_period")
+    @PostMapping("_load-for-period")
     fun loadForPeriod(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) startDate: LocalDate? = null,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) endDate: LocalDate? = null
@@ -31,7 +26,7 @@ class DailyMetricsController constructor(
         dailyMetricsService.loadForPeriod(startDate, endDate)
     }
 
-    @PostMapping("_load_for_date")
+    @PostMapping("_load-for-]date")
     fun loadForDate(@RequestParam date: LocalDate) {
         dailyMetricsService.loadForDate(date)
     }

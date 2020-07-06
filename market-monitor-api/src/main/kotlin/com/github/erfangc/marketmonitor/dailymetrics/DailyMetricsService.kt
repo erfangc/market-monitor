@@ -8,10 +8,7 @@ import com.github.erfangc.marketmonitor.io.MongoDB.database
 import com.mongodb.client.model.Indexes
 import com.vhl.blackmo.grass.dsl.grass
 import org.apache.http.client.methods.HttpGet
-import org.litote.kmongo.div
-import org.litote.kmongo.eq
-import org.litote.kmongo.findOne
-import org.litote.kmongo.getCollection
+import org.litote.kmongo.*
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.io.InputStream
@@ -51,8 +48,17 @@ class DailyMetricsService {
         loadForPeriod()
     }
 
-    fun loadForToday() {
-        loadForDate(LocalDate.now())
+    fun catchUp() {
+        val latestDate = dailyMetrics
+                .find()
+                .descendingSort(DailyMetricRow::dailyMetric / DailyMetric::date)
+                .limit(1)
+                .firstOrNull()?.dailyMetric?.date
+        if (latestDate == null) {
+            bootstrap()
+        } else {
+            loadForPeriod(latestDate.plusDays(1), LocalDate.now())
+        }
     }
 
     fun loadForPeriod(startDate: LocalDate? = null, endDate: LocalDate? = null) {
