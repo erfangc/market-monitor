@@ -17,20 +17,6 @@ object QuandlService {
         return queryQuandl(publisher, table, null)
     }
 
-    fun queryQuandl(publisher: String, table: String, cursorId: String?): QuandlTable {
-        val uri = ("https://www.quandl.com/api/v3/datatables/$publisher/$table.json?&api_key=${quandlApiKey}"
-                + (cursorId?.let { "&qopts.cursor_id=$it" } ?: ""))
-        val httpGet = HttpGet(uri)
-        log.info("Requesting table data from Quandl via $uri")
-        val inputStream = HttpClientBuilder
-                .create()
-                .build()
-                .execute(httpGet)
-                .entity
-                .content
-        return objectMapper.readValue(inputStream, QuandlTable::class.java)
-    }
-
     fun exportQuandl(
             publisher: String,
             table: String,
@@ -45,7 +31,20 @@ object QuandlService {
             batch++
             cursorId = quandlResponse.meta.next_cursor_id
         } while (cursorId != null)
+    }
 
+    private fun queryQuandl(publisher: String, table: String, cursorId: String?): QuandlTable {
+        val uri = ("https://www.quandl.com/api/v3/datatables/$publisher/$table.json?&api_key=${quandlApiKey}"
+                + (cursorId?.let { "&qopts.cursor_id=$it" } ?: ""))
+        val httpGet = HttpGet(uri)
+        log.info("Requesting table data from Quandl via $uri")
+        val inputStream = HttpClientBuilder
+                .create()
+                .build()
+                .execute(httpGet)
+                .entity
+                .content
+        return objectMapper.readValue(inputStream, QuandlTable::class.java)
     }
 
 }

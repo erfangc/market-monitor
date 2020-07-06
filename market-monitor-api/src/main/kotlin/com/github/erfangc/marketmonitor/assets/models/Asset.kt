@@ -1,4 +1,4 @@
-package com.github.erfangc.marketmonitor.assets
+package com.github.erfangc.marketmonitor.assets.models
 
 import java.time.LocalDate
 
@@ -31,9 +31,4 @@ data class Asset(
         val lastquarter: LocalDate? = null,
         val secfilings: String? = null,
         val companysite: String? = null
-)
-
-data class AssetRow(
-        val _id: String,
-        val asset: Asset
 )

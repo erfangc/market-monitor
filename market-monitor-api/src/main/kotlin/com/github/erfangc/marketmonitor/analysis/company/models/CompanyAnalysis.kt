@@ -1,6 +1,6 @@
 package com.github.erfangc.marketmonitor.analysis.company.models
 
-import com.github.erfangc.marketmonitor.assets.Asset
+import com.github.erfangc.marketmonitor.assets.models.Asset
 import java.time.LocalDate
 
 data class CompanyAnalysis(

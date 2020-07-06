@@ -3,7 +3,7 @@ package com.github.erfangc.marketmonitor
 import com.github.erfangc.marketmonitor.analysis.company.models.CompanyAnalysis
 import com.github.erfangc.marketmonitor.analysis.company.models.CompanyAnalysisRequest
 import com.github.erfangc.marketmonitor.analysis.summary.models.SummaryAnalysis
-import com.github.erfangc.marketmonitor.assets.Asset
+import com.github.erfangc.marketmonitor.assets.models.Asset
 import com.github.erfangc.marketmonitor.dailymetrics.models.DailyMetric
 import com.github.erfangc.marketmonitor.fundamentals.models.Fundamental
 import me.ntrrgc.tsGenerator.TypeScriptGenerator

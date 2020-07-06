@@ -1,5 +1,6 @@
 package com.github.erfangc.marketmonitor.assets
 
+import com.github.erfangc.marketmonitor.assets.models.Asset
 import org.springframework.web.bind.annotation.*
 
 @ExperimentalStdlibApi
