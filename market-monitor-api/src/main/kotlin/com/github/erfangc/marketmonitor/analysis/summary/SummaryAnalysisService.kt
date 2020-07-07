@@ -19,11 +19,11 @@ class CompanyReturnSummaryService(private val companyAnalysisService: CompanyAna
     private val log = LoggerFactory.getLogger(CompanyReturnSummaryService::class.java)
 
     fun getSummaryAnalysis(): SummaryAnalysis {
-        var results = CompanyAnalysisService.companyReturnAnalysesCollection.find().toList()
+        var results = CompanyAnalysisService.companyAnalysesCollection.find().toList()
         if (results.isEmpty()) {
             log.info("Performing market summary analysis by bootstrapping company analysis")
             companyAnalysisService.bootstrap()
-            results = CompanyAnalysisService.companyReturnAnalysesCollection.find().toList()
+            results = CompanyAnalysisService.companyAnalysesCollection.find().toList()
         }
         val sectorSummaries = sectorSummaries(results)
         val snp500 = snp500(results).sortedBy { it.discountRate }

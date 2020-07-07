@@ -31,7 +31,7 @@ class CompanyAnalysisService(
     private val log = LoggerFactory.getLogger(CompanyAnalysisService::class.java)
 
     companion object {
-        val companyReturnAnalysesCollection = database.getCollection<CompanyAnalysis>()
+        val companyAnalysesCollection = database.getCollection<CompanyAnalysis>()
     }
 
     fun bootstrap() {
@@ -52,11 +52,11 @@ class CompanyAnalysisService(
                         null
                     }
                 }
-        companyReturnAnalysesCollection.drop()
-        companyReturnAnalysesCollection.createIndex(
+        companyAnalysesCollection.drop()
+        companyAnalysesCollection.createIndex(
                 Indexes.ascending(CompanyAnalysis::date.name)
         )
-        val result = companyReturnAnalysesCollection.insertMany(rows)
+        val result = companyAnalysesCollection.insertMany(rows)
         log.info("Saved ${result.insertedIds.size} rows into MongoDB collection ${CompanyAnalysis::class.simpleName}")
     }
 
