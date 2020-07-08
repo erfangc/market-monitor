@@ -28,8 +28,8 @@ class MMControllerAdvice {
         log.error("Bad input exception on request", e)
         return ResponseEntity(
                 ApiError(
-                        status = 404,
-                        message = e.message ?: "An error has occurred on the server"
+                        status = 400,
+                        message = e.message ?: "Invalid input provided"
                 ),
                 HttpStatus.BAD_REQUEST
         )
